@@ -700,9 +700,9 @@ A fim de não tirar proveito das funções do \matlab de forma a manter a genera
 		\State{$m$ = \textbf{createpde}(1);}
 		\State{\textbf{geometryFromEdges}($m$,$g$);}
 		\State{\textbf{generateMesh}($m$, 'Hmax',$valHmax$);}
-		\State{($p$,$e$,$t$) = \textbf{meshToPet}($m.Mesh$);}
-		\State{$C$ = geraMatElementares($p$, $t$);}
-		\State{$G$ = geraMatGlobal($C$, $t$);}
+		\State{($nos$,$tri$) = \textbf{meshToPet}($m.Mesh$);}
+		\State{$C$ = geraMatElementares($nos$, $tri$);}
+		\State{$G$ = geraMatGlobal($C$, $tri$);}
 		\State{($A$, $b$) = atribuiContorno($G$, $dadosContorno$);}
 		\State{$sol$ = resolveSistLinear($A$,$b$);}
 		\State{\textbf{pdeplot}($m$,...);}
@@ -769,17 +769,17 @@ A fim de não tirar proveito das funções do \matlab de forma a manter a genera
  
 
 
-A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações na solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método do gradiente conjugado proposta por \citeonline{Barrett1995}. O CG como explicitado no referencial teórico, é um método iterativo não estacionário do subespaço de Krylov. Como coloca \citeonline{Wathen1989}, o uso de métodos iterativos se tornou competitivo à medida em que os sistemas de equações se tornavam maiores. A técnica EBE foi proposta por \citeonline{Hughes1983} como como sendo um precondicionador para o CG de forma a possibilitar que as computações sejam realizadas no nível elementar \cite{Kiss2012} de forma a possibilitar a vetorização (ou paralelização) e a economia de memória.
+A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações na solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método do gradiente conjugado proposta por \citeonline{Barrett1995}. O CG como explicitado no referencial teórico, é um método iterativo não estacionário do subespaço de Krylov. Como coloca \citeonline{Wathen1989}, o uso de métodos iterativos se tornou competitivo à medida em que os sistemas de equações se tornavam maiores. A técnica EBE foi proposta por \citeonline{Hughes1983} como como sendo um precondicionador para o CG de forma a possibilitar que as computações com matrizes sejam realizadas no nível elementar \cite{Kiss2012} de forma a possibilitar a vetorização (ou paralelização) e a economia de memória.
 
 A motivação da escolha do \textit{solver} do \matlab (``$\setminus$'' ou $mldivide$) está no fato de ele utilizar diferentes algoritmos dependendo da estrutura da matriz de coeficientes, tais como simetria e esparsidade \cite{matMldivide}. Especificamente para o problema deste trabalho, cuja matriz é Hermitiana (auto-adjunta) e positiva definida, o \textit{solver} adota a fatoração de Cholesky ou a LDL.
 
-A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++. O pseudocódigo do CG é apresentado em \ref{alg:CG} e a descrição de cada etapa é apresentada na seção \ref{sec:CG} da fundamentação teórica.
+A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++. O pseudocódigo do CG precondicionado com a matriz $M$ é apresentado em \ref{alg:CG} e a descrição de cada etapa é apresentada na seção \ref{sec:CG} da fundamentação teórica.
 
 \begin{algorithm}	
 	\caption{\label{alg:CG}Pseudocódigo do CG} 
 	\begin{algorithmic}[1]
 		\State{$x_{0}$ = $\{0\}$}
-		\State{$r_{0}$ = $b - Ax_{0}$}
+		\State{$r_{0}$ = $b - Ax_0$}
 		\For{i = 1,2...}
 			\State{$z_{i-1}$ = resolve($M$, $r_{i-1}$)}
 			\State{$\rho_{i-1}$ = ${r_{i-1}}^{T}z_{i-1}$}
@@ -816,7 +816,42 @@ A adaptação do bloco referente à atribuição das condições de contorno (li
 	\label{fig:contornoEBE}
 \end{figure}
 
-De posse das matrizes e vetores elementares e dos vetores 
+De posse das matrizes e vetores elementares com as condições de contorno atribuídas, é feita a adaptação no algoritmo do  CG a fim de que os cálculos envolvendo matrizes sejam feitos elemento a elemento. As operações entre vetores e escalares são mantidas no nível global, visto que não requerem tanto esforço computacional como as operações matriciais.  As adaptações consistem basicamente em percorrer os $N$ elementos, realizando os cálculos pertinentes e em seguida, armazenar nos vetores globais os resultados gerados para cada nó do elemento. As linhas $4$ e $12$ do algoritmo \ref{alg:CG} possuem operações matriciais e são modificadas conforme apresentado nos pseudocódigos \ref{alg:ebeCG1} e \ref{alg:ebeCG2}. Além disso, o resíduo inicial da linha $2$ do \ref{alg:CG} é igual a $b$ , dado que o chute $x_0$ vale zero para todos os nós. Como os valores de $b$ foram atribuídos pelas condições de contorno em nível elementar, é necessário realizar a montagem do vetor $b$ global para a determinação do resíduo inicial aconteça. Este processo de montagem é apresentado no pseudocódigo \ref{alg:ebeCG3}.
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeCG1}Adaptação da declaração $z_{i-1}$ = resolve($M$, $r_{i-1}$)} 
+	\begin{algorithmic}[1]
+		\State{$z$ = $\{0\}$}		
+		\For{j = 1,2...$N$}
+		\State{$map = tri(j)$}
+		\State{$M_e = precond(A_e(j))$}
+		\State{$z(map) = z(map) + M_e(j)r(map)$}
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeCG2}Adaptação da declaração $q_i$ = $Ap_i$} 
+	\begin{algorithmic}[1]
+		\State{$q$ = $\{0\}$}		
+		\For{j = 1,2...$N$}
+		\State{$map = tri(j)$}
+		\State{$q(map) = q(map) + A_e(j)q(map)$}
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeCG3}Adaptação da declaração $r_{0}$ = $b - Ax_{0}$} 
+	\begin{algorithmic}[1]
+		\State{$b$ = $\{0\}$}		
+		\For{j = 1,2...$N$}
+		\State{$map = tri(j)$}
+		\State{$b(map) = b(map) + b_e(j)$}
+		\EndFor
+		\State{$r_{0}$ = $b$}
+	\end{algorithmic}
+\end{algorithm}
 
 \section{Resultados preliminares}
 A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, o refinamento da malha do objeto gerada pela função generateMesh é feito de forma diferente, por meio da alteração do parâmetro \textit{Hmax} que estabelece o tamanho máximo de cada aresta. A vantagem dessa abordagem é o maior controle das propriedades da malha, como por exemplo a quantidade de elementos, no entanto, a desvantagem é que a cada alteração neste parâmetro uma nova malha é gerada, em diferentes pontos. Dessa forma, não se pode precisar com exatidão do valor em cada um dos pontos de referência apresentados nas figuras \ref{fig:solPde}{(c)} e \ref{fig:solPde}{(d)}, no entanto, a corretude da aproximação pode ser verificada na média pelos nós que estão entorno de cada ponto de referência ou ainda considerando o valor do nó mais próximo. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Foram adotadas regiões quadradas de lado igual a $3mm$, $5mm$ e $10mm$, de acordo com a localização do ponto de referencia.
