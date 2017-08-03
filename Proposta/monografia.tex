@@ -822,10 +822,10 @@ De posse das matrizes e vetores elementares com as condições de contorno atrib
 	\caption{\label{alg:ebeCG1}Adaptação da declaração $z_{i-1}$ = resolve($M$, $r_{i-1}$)} 
 	\begin{algorithmic}[1]
 		\State{$z$ = $\{0\}$}		
-		\For{j = 1,2...$N$}
+		\For{j = 1,2...$|tri|$}
 		\State{$map = tri(j)$}
 		\State{$M_e = precond(A_e(j))$}
-		\State{$z(map) = z(map) + M_e(j)r(map)$}
+		\State{$z(map) = z(map) + M_er(map)$}
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
@@ -834,7 +834,7 @@ De posse das matrizes e vetores elementares com as condições de contorno atrib
 	\caption{\label{alg:ebeCG2}Adaptação da declaração $q_i$ = $Ap_i$} 
 	\begin{algorithmic}[1]
 		\State{$q$ = $\{0\}$}		
-		\For{j = 1,2...$N$}
+		\For{j = 1,2...$|tri|$}
 		\State{$map = tri(j)$}
 		\State{$q(map) = q(map) + A_e(j)q(map)$}
 		\EndFor
@@ -845,9 +845,68 @@ De posse das matrizes e vetores elementares com as condições de contorno atrib
 	\caption{\label{alg:ebeCG3}Adaptação da declaração $r_{0}$ = $b - Ax_{0}$} 
 	\begin{algorithmic}[1]
 		\State{$b$ = $\{0\}$}		
-		\For{j = 1,2...$N$}
+		\For{j = 1,2...$|tri|$}
 		\State{$map = tri(j)$}
 		\State{$b(map) = b(map) + b_e(j)$}
+		\EndFor
+		\State{$r_{0}$ = $b$}
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Coloração da malha}
+Proposta por \citeonline{Wathen1989} e implementada por \citeonline{Kiss2012} a coloração da malha possibilita que os trechos do CG descritos nos algoritmos \ref{alg:ebeCG1}, \ref{alg:ebeCG2} e \ref{alg:ebeCG3} sejam paralelizados. A coloração assim como o processo de exclusão mútua são estratégias adotadas para evitar condições de corrida. Condição de corrida é o estado inconsistente dos dados causado por transações não atômicas. Desta forma, se por exemplo, dois processos ou \textit{threads} alteram ao mesmo tempo um dado em memória compartilhada, não se pode prever o valor final do dado, mas sabe-se que será inconsistente. A coloração deve acontecer de tal forma que elementos que compartilhem um mesmo nó possuam cores distintas. Uma característica desejável num algoritmo otimizado é que haja uma distribuição equalizada na quantidade elementos de cada cor, ao invés de uma quantidade mínima de cores. Por exemplo, numa malha de $1000$ elementos é preferível se utilizar $20$ cores com $50$ elementos de cada cor, ao invés de $6$ cores com uma distribuição desequilibrada de elementos, como por exemplo $\{500 \ 50 \ 200 \ 150 \ 10 \ 90\}$. Contudo, como o objetivo da etapa de \textit{validação do problema} não é obter resultados ótimos, foi adotada uma heurística gulosa sem balanceamento de cores, mas que apenas prioriza a aplicação das cores menos utilizadas. A figura \ref{fig:color} mostra um zoom na coloração da malha no topo entre as duas placas.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=0.5]{figuras/color.pdf}
+	\caption{Exemplo de coloração da malha}
+	\label{fig:color}
+\end{figure}
+
+Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que elementos da mesma cor seja executados simultaneamente e elementos de cores distintas sequencialmente. Como elementos de uma determinada cor não possuem vértices em comum, não há a possibilidade de acontecer condição de corrida durante o acesso às variáveis globais $z$ e  $r$ do algoritmo \ref{alg:ebeCorCG1} e $q$ e $d$ dos algoritmos \ref{alg:ebeCorCG2} e \ref{alg:ebeCorCG3} respectivamente. A estrutura de dados $cores$ contém os dados do elemento, tais como os identificadores dos nós e do próprio elemento na malha.
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeCorCG1}Aplicação da coloração no algoritmo \ref{alg:ebeCG1}} 
+	\begin{algorithmic}[1]
+		\State{$z$ = $\{0\}$}
+		\For{c = 1,2...$|cores|$}	
+		\State{$triCor = cores(c)$}	
+		\For{j = 1,2...$|triCor|$}
+		\State{$idG = triCor(j)$}
+		\State{$map = tri(idG)$}
+		\State{$M_e = precond(A_e(idG))$}
+		\State{$z(map) = z(map) + M_er(map)$}
+		\EndFor
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeCorCG2}Aplicação da coloração no algoritmo \ref{alg:ebeCG2}} 
+	\begin{algorithmic}[1]
+		\State{$q$ = $\{0\}$}
+		\For{c = 1,2...$|cores|$}	
+		\State{$triCor = cores(c)$}					
+		\For{j = 1,2...$|triCor|$}
+		\State{$idG = triCor(j)$}
+		\State{$map = tri(id)$}
+		\State{$q(map) = q(map) + A_e(idG)q(map)$}
+		\EndFor
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeCorCG3}Aplicação da coloração no algoritmo \ref{alg:ebeCG3}} 
+	\begin{algorithmic}[1]
+		\State{$b$ = $\{0\}$}
+		\For{c = 1,2...$|cores|$}	
+		\State{$triCor = cores(c)$}					
+		\For{j = 1,2...$N$}
+		\State{$idG = triCor(j)$}
+		\State{$map = tri(idG)$}
+		\State{$b(map) = b(map) + b_e(idG)$}
+		\EndFor
 		\EndFor
 		\State{$r_{0}$ = $b$}
 	\end{algorithmic}
