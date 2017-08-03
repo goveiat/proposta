@@ -1,0 +1,486 @@
+%% This BibTeX bibliography file was created using BibDesk.
+%% http://bibdesk.sourceforge.net/
+
+
+%% Created for Lauro Cesar Araujo at 2015-04-27 19:43:45 -0300 
+
+
+%% Saved with string encoding Unicode (UTF-8)
+%
+
+
+
+@book{boyceDiprima,
+  title={Equacões Diferenciais Elementares e Problemas de Valores de Contorno},
+  author={Boyce, William E. and DiPrima, Richard C.},
+  isbn={978521617563},
+  year={2010},
+  publisher={LTC}
+}
+
+
+@book{powers,
+  title={Boundary Value Problems and Partial Differential Equations},
+  author={David L. Powers},
+  isbn={139780125637381},
+  year={2006},
+  publisher={Elsevier}
+}
+@book{sadiku,
+  title={Numerical Techniques in Electromagnetics},
+  author={Sadiku, Matthew N. O.},
+  isbn={0-8493-1395-3},
+  year={2001},
+  publisher={CRC Press}
+}
+@book{burdenFaires,
+  title={Análise Numérica},
+  author={Richard L. Burden; J. Douglas Faires},
+  isbn={978-85-221-0601-1},
+  year={2008},
+  publisher={CENGAGE Learning}
+}
+@book{reddy,
+  title={An Introduction to the Finite Element Method},
+  author={J. N. Reddy},
+  isbn={0071244735},
+  year={2006},
+  publisher={McGraw Hill}
+}
+@book{huebner,
+  title={The Finite Element Method for Engineers},
+  author={Huebner, Kenneth H. and Dewhirst,Donald L. and Smith, Douglas E. and Byrom, Ted G.},
+  isbn={ 978-0-471-37078-9},
+  year={2001},
+  publisher={John Wiley \& sons}
+}
+@book{davis,
+  title={Numerical Methods \& modeling for chemical engineers},
+  author={Mark E. Davis},
+  isbn={0471887617},
+  year={2001},
+  publisher={John Wiley \& sons}
+}
+
+@book{jin,
+	title={The Finite Element Method in Electromagnetics},
+	author={Jianming Jin},
+	isbn={0471438189},
+	year={2002},
+	publisher={John Wiley \& sons}
+}
+
+@book{volakis,
+  title={Finite Element Method for Electromagnetics},
+  author={Volakis, John L. and Chatterjee, Arindam and Kempel, Leo C.},
+  isbn={0780334256},
+  year={1998},
+  publisher={John Wiley \& sons}
+}
+@book{zien,
+  title={The Finite Element Method its Basis \& Fundamentals},
+  author={R. L. Taylor; J.Z. Zhu;O. C. Zienkiewicz},
+  isbn={0750663200},
+  year={2005},
+  publisher={Elsevier}
+}
+@book{desai,
+  title={Introduction to the Finite Element Method: A Numerical Method for Engineering Analysis},
+  author={J.F. Abel; Chandrakant S. Desai},
+  year={1972},
+  publisher={Van Nostrand Reinhold Company}
+}
+@booklet{moh,
+  title={An Introduction to the Finite Element Method (FEM)for Differential Equations},
+  author={Mohammad Asadzadeh},
+  year={2012},
+  month={Janeiro},
+}
+@misc{ita_ed,
+  title={Resolução Numérica de Eq. Dif.},
+  url={http://www.comp.ita.br/~pauloac/cci22/cap07_slides.pdf},
+}
+@misc{pvi_edo,
+  title={Metodos Numericos para Eng. Quimica},
+  url={http://www2.peq.coppe.ufrj.br/Pessoal/Professores/Arge/EQE358/Capitulo7-PVI_EDO.pdf},
+}
+
+@article{Strang1973,
+	author = {Strang, Gilbert},
+	doi = {10.1090/S0002-9904-1973-13351-8},
+	file = {:home/thiago/Dropbox/TCC-2017/fem/Strang - 1973 - Piecewise Polynomials and the Finite Element Method 1.pdf:pdf},
+	issn = {0002-9904},
+	journal = {Bulletin of the American Mathematical Society},
+	mendeley-groups = {TCC-2017/fem},
+	number = {6},
+	pages = {1128--1137},
+	title = {{Piecewise Polynomials and the Finite Element Method}},
+	volume = {79},
+	year = {1973}
+}
+
+
+
+
+@article{Barrett1995,
+	abstract = {Which of the following statements is true? • Users want “black box” software that they can use with complete confidence for general problem classes without having to understand the fine algorithmic details. • Users want to be able to tune data structures for a particular application, even if the software is not as reliable as that provided for general methods. It turns out both are true, for different groups of users. Traditionally, users have asked for and been provided with black box software in the form of mathematical libraries such as LAPACK, LINPACK, NAG, and IMSL. More recently, the high performance community has discovered that they must write custom software for their problem. Their reasons include inadequate functionality of existing software libraries, data structures that are not natural or convenient for a particular problem, and overly general software that sacrifices too much performance when applied to a special case of interest. Can we meet the needs of both groups of users? We believe we can. Accordingly, in this book, we introduce the use of templates. A template is a description of a general algorithm rather than the executable object code or the source code more commonly found in a conventional software library. Nevertheless, although templates are general descriptions of key algorithms, they offer whatever degree of customization the user may desire. For example, they can be configured for the specific data structure of a problem or for the specific computing system on which the problem is to run. We focus on the use of iterative methods for solving large sparse systems of linear equations. Many methods exist for solving such problems. The trick is to find the most effective method for the problem at hand. Unfortunately, a method that works well for one problem type may not work as well for another. Indeed, it may not work at all. Thus, besides providing templates, we suggest how to choose and implement an effective method, and how to specialize a method to specific matrix types. We restrict ourselves to iter ative methods, which work by repeatedly improving an approximate solution until it is accurate enough. These methods access the coefficient matrix A of the linear system only via the matrix vector product y = A {\textperiodcentered} x (and perhaps z = A T {\textperiodcentered} x). Thus the user need only supply a subroutine for computing y (and perhaps z) given x, which permits full exploitation of the sparsity or other special structure of A. We believe that after reading this book, applications developers will be able to use templates to get their program running on a parallel machine quickly. Nonspecialists will know how to choose and implement an approach to solve a particular problem. Specialists will be able to assemble and modify their codes—without having to make the huge investment that has, up to now, been required to tune large-scale applications for each particular machine. Finally, we hope that all users will gain a better understanding of the algorithms employed. While education has not been one of 1 the traditional goals of mathematical software, we believe that our approach will go a long way in providing such a valuable service.},
+	author = {Barrett, Richard and Berry, Michael and Chan, Tony F. and Demmel, James and Donato, June M and Dongarra, Jack and Eijkhout, Victor and Pozo, Roldan and Romine, Charles and S., G. W. and van der Vorst, Henk},
+	doi = {10.2307/2153507},
+	file = {:home/thiago/Dropbox/TCC-2017/alc/Barrett et al. - 1995 - Templates for the Solution of Linear Systems Building Blocks for Iterative Methods.pdf:pdf},
+	isbn = {978-0-89871-328-2},
+	issn = {00255718},
+	journal = {Mathematics of Computation},
+	keywords = {Linear Systems,iterative methods},
+	mendeley-groups = {TCC-2017/alc},
+	number = {211},
+	pages = {1349},
+	title = {{Templates for the Solution of Linear Systems: Building Blocks for Iterative Methods.}},
+	url = {http://www.jstor.org/stable/2153507?origin=crossref},
+	volume = {64},
+	year = {1995}
+}
+
+
+@article{Xu2005,
+	author = {Xu, Jianfeng and Yin, Wen Yan and Mao, Junfa},
+	doi = {10.1109/APMC.2005.1606435},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Xu, Yin, Mao - 2005 - Capacitance extraction of high-density 3D interconnects using finite element method.pdf:pdf},
+	isbn = {078039433X},
+	journal = {Asia-Pacific Microwave Conference Proceedings, APMC},
+	mendeley-groups = {TCC-2017/ebe},
+	pages = {3--5},
+	title = {{Capacitance extraction of high-density 3D interconnects using finite element method}},
+	volume = {2},
+	year = {2005}
+}
+
+
+@article{Yao2015,
+	abstract = {—Biconjugate Gradient Stabilized (BiCGStab) method is a popular iterative method for solving massive linear system of equations with sparse asymmetric coefficient matrix. Implementing methods of BiCGStab on CUDA-enabled GPU libraries are given in the paper. Performance comparisons are made. Different matrix storage formats were used in the implementations and the experiments. Based on the study, suggestions of solving different kinds of linear system of equations are given.},
+	author = {Yao, Liankai and Ji, Xiaohui and Liu, Shuai and Yang, Jiayue},
+	doi = {10.1109/UIC-ATC-ScalCom-CBDCom-IoP.2015.119},
+	file = {:home/thiago/Dropbox/TCC-2017/cg/Yao et al. - 2016 - Parallel implementation and performance comparison of BiCGStab for massive sparse linear system of equations on GPU.pdf:pdf},
+	isbn = {9781467372114},
+	journal = {Proceedings - 2015 IEEE 12th International Conference on Ubiquitous Intelligence and Computing, 2015 IEEE 12th International Conference on Advanced and Trusted Computing, 2015 IEEE 15th International Conference on Scalable Computing and Communications, 20},
+	keywords = {BiCGStab,CUDA,Spare matrix format},
+	mendeley-groups = {TCC-2017/cg},
+	pages = {603--608},
+	title = {{Parallel implementation and performance comparison of BiCGStab for massive sparse linear system of equations on GPU libraries}},
+	year = {2015}
+}
+
+@article{Ahamed2016,
+	author = {Ahamed, Abal-Kassim Cheik and Magoul{\`{e}}s, Fr{\'{e}}d{\'{e}}ric},
+	doi = {10.1016/j.advengsoft.2011.12.013},
+	file = {:home/thiago/Dropbox/TCC-2017/cg/Conjugate gradient method with graphics processing unit acceleration$\backslash$:CUDA vs OpenCL.pdf:pdf},
+	issn = {0965-9978},
+	journal = {Advances in Engineering Software},
+	keywords = {conjugate gradient method},
+	mendeley-groups = {TCC-2017/cg},
+	number = {1},
+	pages = {164--169},
+	title = {{Conjugate gradient method with graphics processing unit acceleration: CUDA vs OpenCL}},
+	url = {http://dx.doi.org/10.1016/j.advengsoft.2011.12.013},
+	volume = {47},
+	year = {2016}
+}
+
+
+@inproceedings{Kiss2012,
+	abstract = {The utilization of Graphical Processing Units (GPUs) for the element-by-element (EbE) finite element method (FEM) is demonstrated. EbE FEM is a long known technique, by which a conjugate gradient (CG) type iterative solution scheme can be entirely decomposed into computations on the element level, i.e., without assembling the global system matrix. In our implementation, NVIDIA's parallel computing solution, the Compute Unified Device Architecture (CUDA), is used to perform the required element-wise computations in parallel. Since element matrices need not be stored, the memory requirement can be kept extremely low. It is shown that this low-storage but computation-intensive technique is better suited for GPUs than those requiring the massive manipulation of large data sets. This study of the proposed parallel model illustrates a highly improved locality and minimization of data movement, which could also significantly reduce energy consumption in other heterogeneous HPC architectures.},
+	author = {Kiss, Imre and Badics, Zsolt and Gyimothy, Szabolcs and Pavo, Jozsef},
+	booktitle = {2012 IEEE Conference on High Performance Extreme Computing, HPEC 2012},
+	doi = {10.1109/HPEC.2012.6408659},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Kiss et al. - 2012 - High locality and increased intra-node parallelism for solving finite element models on GPUs by novel element-by-el.pdf:pdf},
+	isbn = {9781467315760},
+	keywords = {CUDA Computing,EbE FEM,GPU Computing,parallel FEM},
+	mendeley-groups = {TCC-2017/ebe},
+	title = {{High locality and increased intra-node parallelism for solving finite element models on GPUs by novel element-by-element implementation}},
+	year = {2012}
+}
+
+@article{Jing2008,
+	author = {Hu, Jing and Quigley, Steven F. and Chan, Andrew},
+	doi = {10.1109/FPL.2008.4630012},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Jing, Steven, Chan - 2008 - An element-by-element preconditioned conjugate gradient solver of 3d tetrahedral finite elements on an FPGA.pdf:pdf},
+	isbn = {9781424419616},
+	journal = {Proceedings - 2008 International Conference on Field Programmable Logic and Applications, FPL},
+	mendeley-groups = {TCC-2017/ebe},
+	pages = {575--578},
+	title = {{An element-by-element preconditioned conjugate gradient solver of 3d tetrahedral finite elements on an FPGA coprocessor}},
+	year = {2008}
+}
+
+@article{Dayde1995,
+	abstract = {We study the solution of large-scale nonlinear optimization problems by methods which aim to exploit their inherent structure. In particular, we consider the all-pervasive property of partial sepa- rability, first studied by Griewank and Toint (1982b). Atypical minimization method for nonlinear optimization problems approximately solves a sequence of simplified linearized subproblems. In this paper, we explore how partial separability may be exploited by iterative methods for solving these subproblems. We particularly address the issue of computing effective preconditioners for such iterative methods. Numerical experiments indicate the effectiveness of these preconditioners on large-scale examples.},
+	author = {Dayde, M. J. and L'Excellent, Jean-Yves and Gould, N. I. M},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/livros/Dayde, L'Excellent, Gould - 1995 - On the Use of Element-by-Element Preconditioners to Solve Large Scale Partially Separable Optimizatio.pdf:pdf},
+	journal = {Computing},
+	keywords = {conjugate-gradients,elememt-by-element preconditioners,large-scale problems,unconstrained optimization},
+	mendeley-groups = {TCC-2017/ebe},
+	title = {{On the Use of Element-by-Element Preconditioners to Solve Large Scale Partially Separable Optimization}},
+	year = {1995}
+}
+
+
+
+@article{Wathen1989,
+	abstract = {Systems of finite element equations are most commonly solved by elimination methods, but for very large problems, iterative techniques become competitive. In particular, the conjugate gradient method with appropriate preconditioning is an attractive strategy for symmetric systems. The purpose of this paper is to analyse the convergence properties of element-by-element techniques both as iterative methods in their own right and as preconditioners for conjugate gradients. One-, two- and three-dimensional problems are considered. ?? 1989.},
+	author = {Wathen, A. J.},
+	doi = {10.1016/0045-7825(89)90052-2},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Wathen - 1989 - An analysis of some element-by-element techniques.pdf:pdf},
+	issn = {00457825},
+	journal = {Computer Methods in Applied Mechanics and Engineering},
+	mendeley-groups = {TCC-2017/ebe},
+	number = {3},
+	pages = {271--287},
+	title = {{An analysis of some element-by-element techniques}},
+	volume = {74},
+	year = {1989}
+}
+
+@article{Carey1988,
+	abstract = {Vector and parallel algorithms for finite-element analysis using the element-by-element (EBE) data structure are developed. The algorithms are based on the EBE approach in conjunction with gradient-type iterative solution. The essential idea is to exploit the independent dense local-element matrix-vector calculations and reconfigure them to take advantage of vector or parallel processing capabilities. The ideas also are well suited to finite-element adaptive refinement computations. Specific algorithmic details related to the implementations are given, together with results of speed-up performance studies conducted on the vector and parallel architectures. The basic vector and parallel versions of the matrix-vector product for the EBE scheme are very straightforward modifications of the EBE algorithm, requiring little coding change.},
+	author = {Carey, G. F. and Barragy, E. and McLay, R. and Sharma, M.},
+	doi = {10.1002/cnm.1630040303},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Element-by-element{\_}vector{\_}and{\_}parallel{\_}computation.pdf:pdf},
+	isbn = {1555-2047},
+	issn = {0748-8025},
+	journal = {Communications in Applied Numerical Methods},
+	mendeley-groups = {TCC-2017/ebe},
+	number = {3},
+	pages = {299--307},
+	title = {{Element-by-element vector and parallel computations}},
+	url = {http://doi.wiley.com/10.1002/cnm.1630040303},
+	volume = {4},
+	year = {1988}
+}
+
+@article{Hughes1983,
+	abstract = {A new type of element-by-element implicit algorithm is proposed for heat conduction analysis. The algorithm is shown to be unconditionally stable, but does not involve a global coefficient matrix. Consequently, there are considerable operation count advantages over typical implicit schemes. Numerical test examples indicate the good behavior of the method. It is believed that the new approach will enable large heat conduction calculations to be performed much more economically than heretofore and is suggestive of related developments in other areas of engineering and the physical sciences. ? ASCE.},
+	author = {Hughes, T.J.R. and Levit, I. and Winget, J.},
+	doi = {10.1061/(ASCE)0733-9399(1983)109:2(576)},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Hughes, Levit, Winget - 1983 - Element-by-element implicit algorithms for heat conduction.pdf:pdf},
+	issn = {07339399},
+	journal = {Journal of Engineering Mechanics},
+	mendeley-groups = {TCC-2017/ebe},
+	number = {2},
+	pages = {576--585},
+	title = {{Element-by-element implicit algorithms for heat conduction}},
+	volume = {109},
+	year = {1983}
+}
+
+@article{He2016,
+	author = {He, Lili and Bai, Hongtao and Li, Ximing and Wang, Yiyuan and Ouyang, Dantong},
+	file = {:home/thiago/Dropbox/TCC-2017/gpu/He et al. - 2016 - 2-D electromagnetic modelling by finite element method on GPU.pdf:pdf},
+	mendeley-groups = {TCC-2017/gpu},
+	pages = {9026--9036},
+	title = {{2-D electromagnetic modelling by finite element method on GPU}},
+	volume = {127},
+	year = {2016}
+}
+
+@article{Chou2016,
+	author = {Chou, Chau-yi and Chen, Kuen-tsann},
+	doi = {10.1109/ICS.2016.105},
+	file = {:home/thiago/Dropbox/TCC-2017/openMp/sel3.pdf:pdf},
+	isbn = {9781509034383},
+	keywords = {-parallel programming paradigms,bioheat,navier-stokes equations,pennes equation,performance evaluation,transfer model},
+	mendeley-groups = {TCC-2017/openMP},
+	pages = {503--508},
+	title = {{Performance Evaluations of Different Parallel Programming Paradigms for Pennes Bioheat Equations and Navier-Stokes Equations}},
+	year = {2016}
+}
+
+@article{Iwashita2017,
+	abstract = {A software framework has been developed for use in parallel boundary element method (BEM) analyses. The framework program was parallelized in a hybrid parallel programming model, and both multiple processes and threads were used. Additionally, an H-matrix library for a distributed memory parallel computer was also developed to accelerate the analysis. In this paper, we describe the basic design concept for the framework and details of its implementation. The framework program, which was written with MPI functions and OpenMP directives, is mainly intended to reduce the user's parallel programming costs. We also show the results of a sample analysis performed with approximately 60,000 unknowns. The numerical results verify the effectiveness of both the parallelization and the H-matrix method. In the test analysis, which was performed using a single core, the H-matrix version of the framework is 17-fold faster than the dense matrix version. The parallel framework program with the H-matrix attains an approximately 50-fold acceleration using 128 cores when compared with sequential computation.},
+	author = {Iwashita, Takeshi and Ida, Akihiro and Mifune, Takeshi and Takahashi, Yasuhito},
+	doi = {10.1109/CEFC.2016.7816379},
+	file = {:home/thiago/Dropbox/TCC-2017/openMp/sel4.pdf:pdf},
+	isbn = {9781509010325},
+	issn = {18770509},
+	journal = {IEEE CEFC 2016 - 17th Biennial Conference on Electromagnetic Field Computation},
+	keywords = {BEM,H-matrix,Parallel processing},
+	mendeley-groups = {TCC-2017/openMP},
+	number = {June},
+	pages = {2200--2209},
+	publisher = {Elsevier B.V.},
+	title = {{Software framework for parallel BEM analyses with H-matrices}},
+	url = {http://dx.doi.org/10.1016/j.procs.2017.05.263},
+	volume = {108},
+	year = {2017}
+}
+
+
+@article{Kang2015,
+	abstract = {With problem size and complexity increasing, several parallel and distributed programming models and frameworks have been developed to efficiently handle such problems. This paper briefly reviews the parallel computing models and describes three widely recognized parallel programming frameworks: OpenMP, MPI, and MapReduce. OpenMP is the de facto standard for parallel programming on shared memory systems. MPI is the de facto industry standard for distributed memory systems. MapReduce framework has become the de facto standard for large scale data-intensive applications. Qualitative pros and cons of each framework are known, but quantitative performance indexes help get a good picture of which framework to use for the applications. As benchmark problems to compare those frameworks, two problems are chosen: all-pairs-shortest-path problem and data join problem. This paper presents the parallel programs for the problems implemented on the three frameworks, respectively. It shows the experiment results on a cluster of computers. It also discusses which is the right tool for the jobs by analyzing the characteristics and performance of the paradigms.},
+	author = {Kang, Sol Ji and Lee, Sang Yeon and Lee, Keon Myung},
+	doi = {10.1155/2015/575687},
+	file = {:home/thiago/Dropbox/TCC-2017/openMp/Performance{\_}Comparison{\_}of{\_}OpenMP{\_}MPI{\_}and{\_}MapReduce.pdf:pdf},
+	issn = {16875699},
+	journal = {Advances in Multimedia},
+	mendeley-groups = {TCC-2017/openMP},
+	number = {August},
+	title = {{Performance comparison of OpenMP, MPI, and MapReduce in practical problems}},
+	volume = {2015},
+	year = {2015}
+}
+
+@article{Boehmer2011,
+	author = {Boehmer, S. and Cramer, T. and Hafner, M. and Lange, E. and Bischof, C. and Hameyer, K.},
+	doi = {10.1049/iet-smt.2011.0126},
+	file = {:home/thiago/Dropbox/TCC-2017/openMp/06324486.pdf:pdf},
+	issn = {17518822},
+	journal = {IET Science, Measurement {\&} Technology},
+	mendeley-groups = {TCC-2017/openMP},
+	number = {5},
+	pages = {339},
+	title = {{Numerical simulation of electrical machines by means of a hybrid parallelisation using MPI and OpenMP for finite-element method}},
+	url = {http://digital-library.theiet.org/content/journals/10.1049/iet-smt.2011.0126},
+	volume = {6},
+	year = {2011}
+}
+
+@article{Anzt2016,
+	abstract = {In this paper, we study the effect of enhancing GPU-accelerated Krylov solvers with preconditioners. We consider the BiCGSTAB, CGS, QMR, and IDR(s) Krylov solvers. For a large set of test matrices, we assess the impact of Jacobi and incomplete factorization preconditioning on the solvers' numerical stability and time-to-solution performance. We also analyze how the use of a preconditioner impacts the choice of the fastest solver.},
+	author = {Anzt, Hartwig and Gates, Mark and Dongarra, Jack and Kreutzer, Moritz and Wellein, Gerhard and K{\"{o}}hler, Martin},
+	doi = {10.1016/j.parco.2017.05.006},
+	file = {:home/thiago/Dropbox/TCC-2017/gpu/Anzt et al. - 2016 - Preconditioned Krylov solvers on GPUs.pdf:pdf},
+	issn = {01678191},
+	journal = {Parallel Computing},
+	keywords = {65Y05,65Y10,65Y20,68W10,GPU,ILU,Jacobi,Krylov solvers,Preconditioning},
+	mendeley-groups = {TCC-2017/gpu},
+	pages = {1--13},
+	publisher = {Elsevier B.V.},
+	title = {{Preconditioned Krylov solvers on GPUs}},
+	url = {http://dx.doi.org/10.1016/j.parco.2017.05.006},
+	volume = {0},
+	year = {2016}
+}
+
+
+@unpublished{Nogueira2011,
+	author = {Nogueira, Edmilson Charles},
+	file = {:home/thiago/Dropbox/TCC-2017/dissert/Nogueira - 2011 - Estudo Da Paraleliza{\c{c}}{\~{a}}o Para Solu{\c{c}}{\~{a}}o Do Sistema Linear Do M{\'{e}}todo Dos Elementos Finitos Generalizados.pdf:pdf},
+	mendeley-groups = {TCC-2017/dissert},
+	pages = {89},
+	title = {{Estudo Da Paraleliza{\c{c}}{\~{a}}o Para Solu{\c{c}}{\~{a}}o Do Sistema Linear Do M{\'{e}}todo Dos Elementos Finitos Generalizados}},
+	year = {2011}
+}
+
+
+@article{Guo2014,
+	abstract = {The trend of all modern computer architectures, and the path to exascale, is towards increasing numbers of lower power cores, with a decreasing memory to core ratio. This imposes a strong evolutionary pressure on algorithms and software to efficiently utilise all levels of parallelism available on a given platform while minimising data movement. Unstructured finite elements codes have long been effectively parallelised using domain decomposition methods, implemented using libraries such as the Message Passing Interface (MPI). However, there are many optimisation opportunities when threading is used for intra-node parallelisation for the latest multi-core/many-core platforms. The benefits include increased algorithmic freedom, reduced memory requirements, cache sharing, reduced number of partitions, less MPI communication and I/O overhead. In this paper, we report progress in implementing a hybrid OpenMP-MPI version of the unstructured finite element code Fluidity. For matrix assembly kernels, the OpenMP parallel algorithm uses graph colouring to identify independent sets of elements that can be assembled concurrently with no race conditions. In this phase there are no MPI overheads as each MPI process only assembles its own local part of the global matrix. We use an OpenMP threaded fork of PETSc to solve the resulting sparse linear systems of equations. We experiment with a range of preconditioners, including HYPRE which provides the algebraic multigrid preconditioner BoomerAMG where the smoother is also threaded. Since unstructured finite element codes are well known to be memory latency bound, particular attention is paid to ccNUMA architectures where data locality is particularly important to achieve good intra-node scaling characteristics. We also demonstrate that utilising non-blocking algorithms and libraries are critical to mixed-mode application so that it can achieve better parallel performance than the pure MPI version.},
+	author = {Guo, Xiaohu and Lange, Michael and Gorman, Gerard and Mitchell, Lawrence and Weiland, Mich{\`{e}}le},
+	doi = {10.1016/j.compfluid.2014.09.007},
+	file = {:home/thiago/Dropbox/TCC-2017/openMp/1-s2.0-S0045793014003442-main.pdf:pdf},
+	issn = {00457930},
+	journal = {Computers and Fluids},
+	keywords = {FEM,Fluidity-ICOM,HYPRE,MPI,Matrix assembly,OpenMP,PETSc,SpMV,Sparse linear solver},
+	mendeley-groups = {TCC-2017/openMP},
+	pages = {227--234},
+	publisher = {Elsevier Ltd},
+	title = {{Developing a scalable hybrid MPI/OpenMP unstructured finite element model}},
+	url = {http://dx.doi.org/10.1016/j.compfluid.2014.09.007},
+	volume = {110},
+	year = {2014}
+}
+
+@article{Yan2017,
+	abstract = {—The Gauss-Seidel preconditioned conjugate gradient (GS-PCG) method applying to element-by-element finite element method (EBE-FEM) is derived and the calculation process is presented in this pape r. The EBE-FEM is one of parallel numerical algorithm, in which a conjugate gradient (CG) type iterative solution scheme can be entirely decomposed into computations on the element level without assembling the global system matrix. The validity and accuracy of the proposed method have been verified through the applications to magnetic field analysis of a long straight current-carrying wire and a three-phases electric motor. Compared with Jacobi preconditioned conjugate gradient method applying to EBE-FEM, less computational time and cost are needed for the proposed method with the same accuracy. The proposed method can be applied to electromagnetic field analysis of power transformer and electric motor, which may be related to large scale numerical computation.},
+	author = {Yan, Xiuke and Han, Xiaoyu and Wu, Dongyang and Xie, Dexin and Bai, Baodong and Ren, Ziyan},
+	doi = {10.1109/TMAG.2017.2657764},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Yan et al. - 2017 - Research on Preconditioned Conjugate Gradient Method Based on EBE-FEM and the Application in Electromagnetic Field A.pdf:pdf},
+	keywords = {GS-PCG,Index Terms—EBE,electromagnetic field,numerical computation},
+	mendeley-groups = {TCC-2017/ebe},
+	number = {6},
+	title = {{Research on Preconditioned Conjugate Gradient Method Based on EBE-FEM and the Application in Electromagnetic Field Analysis}},
+	url = {http://www.ieee.org/publications{\_}standards/publications/rights/index.html},
+	volume = {53},
+	year = {2017}
+}
+
+@article{Levit1987,
+	author = {Levit, Itzhak},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Levit - 1987 - Element by element solvers of order n.pdf:pdf},
+	mendeley-groups = {TCC-2017/ebe},
+	number = {3},
+	pages = {357--360},
+	title = {{Element by element solvers of order n}},
+	volume = {27},
+	year = {1987}
+}
+
+
+@article{Wu2015,
+	author = {Wu, Dongyang and Yan, Xiuke and Tang, Renyuan and Xie, Dexin and Chen, Zh},
+	file = {:home/thiago/Dropbox/TCC-2017/ebe/Unknown - 2015 - GPU Acceleration of EBE Method for 3-D Linear Steady Eddy Current Field.pdf:pdf},
+	mendeley-groups = {TCC-2017/ebe},
+	title = {{GPU Acceleration of EBE Method for 3-D Linear Steady Eddy Current Field}},
+	year = {2015}
+}
+
+
+
+
+
+@book{Szabo2009,
+	author = {Szabo, Barna and Babu{\v{s}}ka, Ivo},
+	doi = {10.1002/9781119993834.ch4},
+	file = {:home/thiago/Dropbox/TCC-2017/fem/livros/Babuska/Chapter{\_}4.pdf:pdf},
+	isbn = {9780470977286},
+	mendeley-groups = {TCC-2017/fem},
+	pages = {109--144},
+	title = {{An Introduction to Finite Element Analysis - Ch4 Generalized Formulations}},
+	year = {2009}
+}
+
+
+
+@misc{scala,
+	title = {Scala Market Share},
+	howpublished = {\url{https://w3techs.com/technologies/details/pl-scala/all/all}},
+	note = {Acesso em: 19/07/2017}
+}
+
+
+@misc{erlang,
+	title = {Erlang Market Share},
+	howpublished = {\url{https://w3techs.com/technologies/details/pl-erlang/all/all}},
+	note = {Acesso em: 19/07/2017}
+}
+
+@misc{nvidia,
+	title = {Produtos NVIDIA},
+	howpublished = {\url{http://www.nvidia.com.br/page/products.html}},
+	note = {Acesso em: 19/07/2017}
+}
+
+@misc{intel,
+	title = {Processadores Intel},
+	howpublished = {\url{https://www.intel.com/content/www/us/en/products/processors.html}},
+	note = {Acesso em: 19/07/2017}
+}
+
+@misc{amd,
+	title = {Produtos AMD},
+	howpublished = {\url{http://www.amd.com/pt-br/products}},
+	note = {Acesso em: 19/07/2017}
+}
+
+@misc{ibm,
+	title = {Processador Power9 da IBM},
+	howpublished = {\url{http://www.ibmsystemsmag.com/power/businessstrategy/competitiveadvantage/POWER9-Plans/}},
+	note = {Acesso em: 19/07/2017}
+}
+
+
+@book{boylestad2011,
+	title={Análise de Circuitos},
+	author={Robert L. Boylestad},
+	isbn={978-85-64574-20-5},
+	year={2011},
+	publisher={Pearson}
+}
+

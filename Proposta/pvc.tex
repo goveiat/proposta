@@ -1,0 +1,63 @@
+% !TeX spellcheck = <none>
+\section{Problema de Valor de Contorno}
+
+
+Um problema modelado por equações diferenciais parciais bem-posto, segundo as definições de Hadamard (1923), é aquele que 	apresenta a existência, unicidade e estabilidade de solução. Por estabilidade entende-se que uma pequena alteração no modelo leva à uma pequena alteração na solução \citep[p. 18]{moh}. Para que estas condições sejam satisfeitas, é necessário que o modelo matemático descreva adequadamente o fenômeno analisado e que as condições de contorno, ou condições iniciais, sejam bem estabelecidas. Assim sendo, um problema de valor 
+
+Um problema de valor inicial, \textbf{PVI}, é aquela que contém as condições iniciais do fenômeno, as quais são impostas sobre a variável dependente e suas derivadas em um único instante de tempo $t_0$. Um problema de valor de contorno \textbf{PVC}, por sua vez, apresenta as condições em pontos distintos, como por exemplo em $x_i$ e $x_f$. \citep[p. 447]{boyce_diprima}. Os sistemas de equações \ref{eq:pvi} e \ref{eq:pvc} mostram respectivamente um problema de valor inicial e de contorno, ambos de segunda ordem.
+
+\begin{equation}
+	\label{eq:pvi}
+	\begin{cases}
+		y'' + p(t)y' + q(t)y = f(t) \\
+		y(t_0) = y_0 \\
+		y'(t_0) = y_0'
+	\end{cases}
+\end{equation}
+
+
+\begin{equation}
+	\label{eq:pvc}
+	\begin{cases}
+		y''(x) + p(x)y'(x) + q(x)y(x) = f(x) \\
+		y(x_i) = \alpha \\
+		y'(x_f) = \beta
+	\end{cases}
+\end{equation}
+
+Geralmente os PVI são dados em função do tempo enquanto os PVC são dados em função do espaço. \citep[p. 447]{boyce_diprima}.
+
+As condições estabelecidas sobre a variável dependente, são condições \textbf{essenciais} ou de \textbf{Dirichlet}, enquanto as que são estabelecidas sobre as derivadas da variável dependente são  conhecidas como \textbf{naturais} ou condições de \textbf{Neumann}.
+
+Além das restrições de Dirichlet e Neumann, conforme mostra a tabela \ref{tab:cond}, existem restrições específicas do fenômeno modelado, como por exemplo, condições de radiação ou de impedência para problemas do eletromagnetismo. \citep[p. 20]{jin}. 
+
+
+\begin{table}	
+	\centering
+	\begin{tabular}{|c|c|}	
+		\hline
+		\textbf{Condição} 
+		& \textbf{Tipo} \\	
+		\hline
+		$y(x_k) = y_k $ 
+		& Dirichlet \\
+		\hline
+		$y(x_k) = 0$
+		& Dirichlet Homogênea\  \\
+		\hline
+		$y'(x_k) = y_k$
+		& Neumann \\
+		\hline
+		$y'(x_k) = 0$
+		& Neumann Homogênea\  \\
+		\hline
+	\end{tabular}
+	\caption{Exemplos de condições de contorno}
+	\label{tab:cond}
+\end{table}
+
+
+A solução analítica de um PVC pode ser obtida por meio da integração direta ou a partir da aplicação de técnicas como a separação de variáveis, expansão em séries ou pela transformada de Laplace. \citep[p. 31, 191, 239]{boyce_diprima} \citep[p. 59, 263, 355]{powers}.
+No entanto, existem problemas da engenharia e da ciência que não são lineares ou apresentam  condições de contorno complexas, existência de interfaces e grande quatidades de detalhes.  Estas características fazem com que a resolução analítica de tais problemas seja impraticável, sendo necessário recorrer a métodos numéricos para se obter uma solução aproximada. \citep[p. 447]{boyce_diprima}  \citep[p.397]{powers}.
+
+

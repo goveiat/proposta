@@ -1,0 +1,60 @@
+\subsection{Formulação fraca do Problema}
+
+A forma fraca, ou forma variacional de uma equação diferencial é uma integral ponderada, equivalente à equação diferencial e às suas condições naturais de contorno. Por meio da forma fraca obtem-se um conjunto de equações algébricas relacionadas aos coeficientes desconhecidos ($c_i$). Para diferentes escolhas da função de peso, diferentes equações algébricas serão obtidas.
+\citep[p. 64]{reddy}
+
+A obtenção da forma fraca será ilustrada com a equação diferencial a seguir e suas condições de contorno:
+
+\begin{equation}
+	\label{eq:exFFraca}
+	\mathcal{L}u = \frac{d^2 u}{dx^2} = f, \ u(a) = \alpha, \ u(b) = \beta
+\end{equation}
+
+Antes de se aplicar a discretização (ou interpolação) dada em \ref{eq:pppol}, substitui-se o problema contínuo a ser resolvido, na integral dos resíduos ponderados:
+
+\begin{equation}
+	R = \frac{d^2 u}{dx^2} - f = 0
+\end{equation}
+
+ \begin{equation}
+	\int_{a}^{b} w\left(\frac{d^2 u}{dx^2} - f\right) dx = 0
+ \end{equation} 
+ 
+ Integrando por partes:
+ 
+ \begin{equation}
+ \label{eq:fFracaG}
+ \left.w \frac{du}{dx}\right|_{a}^{b} - 
+	\int_{a}^{b} 
+	\frac{du}{dx} \frac{dw}{dx} dx = \int_{a}^{b} wf dx
+ \end{equation} 
+
+A equação \ref{eq:fFracaG} é denominada forma fraca da equação \ref{eq:exFFraca}. Adicionalmente, verifica-se a condição de contorno. Se for considerado que $ w(a) = w(b) = 0$ por exemplo, tem-se:
+
+ \begin{equation}
+ - 	\int_{a}^{b} 
+	\frac{du}{dx} \frac{dw}{dx} dx = \int_{a}^{b} wf dx
+ \end{equation} 
+ 
+ Substituindo a função contínua $u$ por sua aproximação $U_N$ e considerando o método de Galerkin:
+ 
+  \begin{equation}
+  - \int_{a}^{b} 
+ 	\frac{d}{dx} 
+ 	\sum_{j = 1}^{N} c_j \phi_j
+ 	\frac{d}{dx} \phi_i dx = \int_{a}^{b} f\phi_i dx, \ i = (1, 2, ..., N)
+  \end{equation} 
+  
+    \begin{equation}
+    -\sum_{j = 1}^{N} \int_{a}^{b} 
+   	\frac{d c_j \phi_j}{dx}    	 
+   	\frac{d \phi_i}{dx}  dx = \int_{a}^{b} f\phi_i dx, \ i = (1, 2, ..., N)
+    \end{equation} 
+    
+    \begin{equation}
+    \label{eq:matFraca}
+    \sum_{j = 1}^{N} 
+    	A_{ij} c_j = F_i,  \ i = (1, 2, ..., N)
+    \end{equation} 
+    
+A equação  ~\ref{eq:matFraca} é a forma matricial obtida com a aplicação do método de Galerkin, a qual é esparsa e simétrica.

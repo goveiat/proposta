@@ -1,0 +1,97 @@
+\section{Método das diferenças finitas}
+
+Como dito anteriormente, métodos numéricos são utilizados para aproximar soluções de equações diferenciais. O MDF tem como objetivo, discretizar o domínio do problema e substituir cada derivada da equação por um quociente-diferença adequado
+\citep[p. 684]{burden_faires}.
+
+
+Sendo o domínio $ \Omega $ unidimensional e contínuo, o mesmo pode ser discretizado particionando-se o intervalo $]a, b[$ em subintervalos iguais. Para isso, seleciona-se um conjunto de $N$ pontos igualmente espaçados entre $a$ e $b$, e dessa forma, $ N + 1 $ subintervalos são obtidos. O conjunto $\Omega \cup \Gamma$ pode então ser reprentado na como um conjunto de valores discretos $x_i$, como mostra a equação a seguir: 
+
+\begin{equation}
+  x_i = a + ih,  i = 0, 1, ... N+1
+\end{equation}
+
+O incremento $h$ corresponde ao comprimento de cada subintervalo e é dado por:
+
+\begin{equation}
+  h = \frac{b-a}{N+1}
+\end{equation}
+
+Nos pontos interiores $ x_i$  com $i = 1, 2. .... N $, isto é, dentro da borda $ \{a, b\} $ ou no domínio $\Omega$, a equação diferencial a ser aproximada é dada na primeira equação do sistema  \ref{eq:edo2}.
+Deseja-se obter o valor de $ y(x_i) $ como uma média do valor de seus vizinhos $ y(x_i + h) $ e $ y(x_i - h) $. Esta abordagem é chamada de diferença centrada, uma vez que o ponto $ y(x_i) $ a ser obtido é o ponto central de uma vizinhança. 
+
+A aproximação da derivada é feita por meio da expansão em série de Taylor truncada. Como a equação a ser aproximada é de ordem 2, a expansão deve ser feita até uma ordem superior a 2. No caso do exemplo apresentado, a expansão foi feita até a ordem 3 e a notação do grande $O$ foi utilizada para denotar o erro do truncamento.
+
+\begin{equation}
+    \label{eq:dfr}
+    y(x_i + h) = y(x_i) + hy'(x_i) + \frac{h^{2}}{2}y''(x_i) + \frac{h^{3}}{6}y'''(x_i) + O(h^{4})
+\end{equation}
+
+\begin{equation}
+    \label{eq:dfl}
+    y(x_i - h) = y(x_i) - hy'(x_i) + \frac{h^{2}}{2}y''(x_i) - \frac{h^{3}}{6}y'''(x_i) + O(h^{4})
+\end{equation}
+
+As equações \ref{eq:dfr} e \ref{eq:dfl} são as expansões truncadas. A soma dessas equações fornece o valor da segunda derivada na forma de diferença centrada.
+
+\begin{equation}
+    \label{eq:difcent2}
+    y''(x_i) = \frac{y(x_i + h) - 2y(x_i) +y(x_i - h) - O(h^{2})}{h^2}
+\end{equation}
+
+ De forma similar, para a derivada de primeira ordem, obtém-se
+
+\begin{equation}
+    \label{eq:difcent}
+    y'(x_i) = \frac{y(x_i + h) - y(x_i - h) - O(h)}{2h}
+\end{equation}
+
+Simplificando a notação de forma que $y_{i+1} = y(x_i + h)$ e $y_{i-1} = y(x_i - h)$ o sistema dado em \ref{eq:edo2} pode ser representado em termos discretos por meio o sistema ~\ref{eq:edoDisc}. Como se trata de uma aproximação, as parcelas relativas ao erro foram desconsideradas.
+
+\begin{equation}
+	\label{eq:edoDisc}
+	\begin{cases}
+		  \frac{y_{i+1} - 2y +y_{i-1}}{h^2} = p(x_i) \frac{y_{i+1} - y_{i-1}}{2h} +q(x_i)y + r(x_i)\\
+			y(a) = \alpha \\
+			y'(b) = \beta \\
+			 i = 0, 1, ... N+1
+	\end{cases}
+\end{equation}
+
+Reorganizando a equação do modelo de ~\ref{eq:edoDisc} no formato apresentado pela equação ~\ref{eq:sistLin} a solução se torna computacionalmente trivial. Iterando os valores de i, o conjunto de equações lineares pode ser colocado na forma matricial, sendo a matriz dos coeficientes, uma matriz tridiagonal.
+
+\begin{equation}
+	\label{eq:sistLin}
+	e_i y_{i-1} + c_i y_i + d_i y_{i +1} = r_i
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix}
+    c_1 & d_1 	& 0 	& 0  & \dots 	& 0 \\
+    e_2 & c_2 	& d_2 	& 0  & \ddots 	& 0 \\
+    0 	& \ddots 	& \ddots 	& \ddots  	 & \ddots 	& 0 \\
+    0 	& 0 	& 0 	& e_N  	 & c_N 	& d_N 
+\end{bmatrix}
+\begin{bmatrix}
+    y_1\\ y_2\\ \vdots \\y_N
+\end{bmatrix}
+=
+\begin{bmatrix}
+    r_1\\ r_2\\ \vdots \\r_N
+\end{bmatrix}
+\end{equation}
+
+A discretização obtida em  ~\ref{eq:edoDisc} pode ser expandido para $n$ dimensões. As equações \ref{eq:lap} e \ref{eq:lapDisc} mostram a equação de laplace em duas dimensões e a mesma equação discretizada pelo método das diferenças finitas centradas.
+
+\begin{equation}
+    \label{eq:lap}
+    \Delta u = \frac{\partial^2 u}{\partial^2 x} + \frac{\partial^2 u}{\partial^2 y} = 0
+\end{equation}
+
+\begin{equation}
+	\label{eq:lapDisc}
+	\begin{cases}
+		 \frac{u(x_{i+1}, y) - 2u(x, y) +u(x_{i-1}, y)}{h^2} +
+		 \frac{u(x, y_{i+1}) - 2u(x, y) +u(x, y_{i-1} )}{h^2} = 0 \\
+			 i = 0, 1, ... N+1
+	\end{cases}
+\end{equation}

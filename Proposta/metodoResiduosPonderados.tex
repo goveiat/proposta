@@ -1,0 +1,49 @@
+\subsection{Método dos Resíduos ponderados}
+
+O método dos elementos finitos consiste em encontrar uma  solução do problema diferencial por meio da aproximação por polinômios 
+\citep[p. 97]{davis}. Uma vez que aproximações geram erros, aqui chamados de resíduos, torna-se necessário reduzir tais resíduos para que se tenha uma aproximação de qualidade.
+
+Uma vez que o método opera sobre um domínio $ \Omega $ discreto, tal que $ \Omega \approx \sum \Omega_j $,  os polinômios utilizados na aproximação são definidos por partes no domínio $\Omega$, isto é, são diferentes em apenas um intervalo do domínio.
+
+O somatótrio definido na equação \ref{eq:pppol} aproximação da solução $ u $ de uma equação diferencial. As contantes $ c_j $ são os coeficientes desconhecidos e as funções $ \phi_j $, chamadas de funções de forma, são conhecidas, diferenciaveis por partes no domínio $ \Omega $ e de respeitam as condições de contorno, ou seja $ \phi_j(a) = \phi_j(b) = 0 $. 
+ 
+
+\begin{equation}
+	\label{eq:pppol}
+	u(x) \approx U_N (x) = \sum_{j = 1}^{N} c_j \phi_j (x)
+\end{equation}
+
+Considere a forma geral da equação diferencial a ser resolvida, indicada pelo operador diferencial $ \mathcal{L} $:
+ 
+ \begin{equation}
+ 	\label{eq:opDif}
+ 	\mathcal{L} u = f
+ \end{equation}
+ 
+ Uma vez que $U_N$ é um resultado aproximado de $u$, mas não necessariamente igual, a desigualdade a seguir é válida e conhecida como \textbf{residual da aproximação}.
+ 
+ \begin{equation}
+ \label{eq:residuo}
+ 	R(x, c_j) = \mathcal{L} U_N - f \neq 0
+ \end{equation}
+ 
+ De modo a obter a aproximação mais adequada, deve-se minimizar o resíduo da aproximação em todo o domínio. Uma vez que não se pode requerer que os resíduos de todos os subdomínios sejam zero, como mostrado na equação ~\ref{eq:residuo}, faz-se a ponderação dos mesmos por meio de funções $w$ de forma a atender a condição residual dada a seguir:
+ \begin{equation}
+ \label{eq:intResPond}
+	\int_{\Omega} w_i(x)R(x, c_i)d\Omega = 0, \ i = (1, 2, ..., N)
+ \end{equation} 
+ 
+O parâmetro $w_i$ é um conjunto de funções integraveis linearmente independentes, chamadas de funções peso
+\citep[p. 60]{reddy}.
+
+Alguns casos especiais do método dos resíduos ponderados são obtidos a partir da escolha do parâmetro $w_i$ 
+
+\begin{equation}
+\label{eq:resPond}
+	\begin{tabular}{ l l }
+	Método de Petrov-Galerkin & $ w_i = \psi_i \neq \phi_i $ \\ 
+	Método de Galerkin & $ w_i = \phi_i $\\  
+	Método dos Mínimos quadrados & $ w_i = \frac{d}{dx} \left(a(x)\frac{d \phi_i}{dx}\right) $ \\ 
+	Método da colocação & $ \delta(x - x_i)  $    ($\delta$ de Dirac)
+	\end{tabular}
+\end{equation}

@@ -1,0 +1,94 @@
+\subsection{Método Variacional}
+Os métodos variacionais são técnicas utilizadas para extremizar o valor de um funcional em um determinado espaço de funções. Por extremizar entende-se encontrar o valor mínimo, máximo ou o ponto de inflexão do funcional.
+Sistemas físicos, segundo o princípio de Hamilton ou princípio da mínima ação, tendem a minimizar sua energia interna ao realizar trabalho. Dessa forma, problemas envolvendo modelos matemáticos podem ser resolvidos considerando-se o problema de minimização de energia equivalente. (\textbf{Nota:} Um apêndice sobre elasticidade plana, princípio de Hamilton e análise funcional deve ser acrescentado).
+
+Um funcional $ I(y) $ é uma regra que associa cada função $ u $ de um domínio $ \Omega $ a um único número real:
+
+\begin{equation}
+I : y \rightarrow \Re
+\end{equation}
+
+Em linhas gerais, pode ser entendido como uma função de funções. Um exemplo típico de funcional é a integral definida a seguir, a qual mapeia a função $ y $ em um valor real.
+
+\begin{equation}
+\label{eq:funcional}
+I = \int_{a}^{b} u(y, y', x) dx
+\end{equation}
+
+Se uma função $ y(x) $ , por exemplo, minimiza o funcional, qualquer variação infinitesimal $ \alpha $ em $ y(x) $ produzirá um valor maior no funcional $ I $, o qual deixará de satisfazer a condição de mínimo. O operador variacional $ \delta $ desloca a função $ y $ em uma distância igual a $ \alpha \eta(x) $, sendo $ \alpha $ uma constante que tende a zero e $ \eta $ uma função suave definida em $[a,b]$, tal que $\eta(a) = \eta(b) = 0$.
+
+Assim, tem-se: 
+
+\begin{equation}
+	\label{eq:sisEta}
+	\begin{cases}
+        y(x, \alpha) = y(x) + \alpha \eta(x) \\
+        y(x, \alpha)' = y(x)' + \alpha \eta'(x) \\
+		\alpha \eta(x) = \delta y(x) \\   
+		\alpha \eta'(x) = \delta y'(x) \\  
+    \end{cases}
+\end{equation}
+
+Se substituirmos as equações de \ref{eq:sisEta} em \ref{eq:funcional} o valor do funcional passa depender tanto da função $ y $ quanto de suas variações, realizadas pelo parâmetro $ \alpha $.
+
+\begin{equation}
+\label{eq:funcionalVar}
+I(\alpha) = \int_{a}^{b} u(y(x, \alpha), y'(x, \alpha), x) dx
+\end{equation}
+
+A variação do funcional $ I $, pode ser entendida em termos diferenciais, como a derivada do funcional em relação ao incremento $\alpha$ da variação.
+
+\begin{equation}
+\delta I = \frac{\partial I}{\partial \alpha}
+\end{equation}
+
+O valor extremo procurado (mínimo, máximo ou ponto de inflexão) é caracterizado por possuir a primeira derivada igual a zero, portanto:
+
+\begin{equation}
+\delta I = \frac{\partial}{\partial \alpha} \int_{a}^{b} u(y(x, \alpha), y'(x, \alpha), x) dx = 0
+\end{equation}
+
+\begin{equation}
+\delta I = \int_{a}^{b} \left(\frac{\partial u}{\partial y} \frac{\partial y}{\partial \alpha} + \frac{\partial u}{\partial y'} \frac{\partial y'}{\partial \alpha}\right) dx = 0
+\end{equation}
+
+Das equações em \ref{eq:sisEta} tem-se 
+
+\begin{equation}
+\begin{split}
+\delta I = \int_{a}^{b} \left(\frac{\partial u}{\partial y} \eta + \frac{\partial u}{\partial y'} \frac{\partial }{\partial x}
+\frac{\partial y}{\partial \alpha}\right) dx \\
+= \int_{a}^{b} \left(\frac{\partial u}{\partial y} \eta + \frac{\partial u}{\partial y'} \eta'
+\right) dx = 0
+\end{split}
+\end{equation}
+
+É importante notar que a variação ocorre apenas no conjunto imagem do funcional, assim $\frac{\partial{x}}{\partial{\alpha}} = 0$. Integrando separadamente o segundo termo por partes tem-se:
+
+\begin{equation}
+\begin{split}
+\delta I = \int_{a}^{b} \eta \left(\frac{\partial u}{\partial y} - \frac{d}{dx} 
+\frac{\partial u}{\partial y'}\right)  dx +
+\left[\frac{\partial u}{\partial y'} \eta(x) \right]_a^b
+\end{split}
+\end{equation}
+
+Uma vez que a variação no contorno é zero (fronteiras fixas), $\eta(a) = \eta(b) = 0$, o valor de $ \delta I $ é dado por:
+
+\begin{equation}
+\label{eq:intEuler}
+\begin{split}
+\delta I = \int_{a}^{b} \eta \left(\frac{\partial u}{\partial y} - \frac{d}{dx} 
+\frac{\partial u}{\partial y'}\right)  dx = 0
+\end{split}
+\end{equation}
+
+Sendo $ \eta $ uma função derivável em $ [a,b] $, para que a igualdade \ref{eq:intEuler} seja satisfeita, torna-se necessário que o termo entre parentesis seja igual a zero
+
+\begin{equation}
+\label{eq:euler}
+\frac{\partial u}{\partial y} - \frac{d}{dx} 
+\frac{\partial u}{\partial y'} = 0, \ a < x < b
+\end{equation}
+
+Do conjunto de funções admissíveis, a única função que minimiza o funcional $I$  e portanto a energia interna do processo físico, é a mesma que resolve a equação \ref{eq:euler}, conhecida como Equação de Euler-Lagrange.
