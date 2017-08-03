@@ -700,10 +700,10 @@ A fim de não tirar proveito das funções do \matlab de forma a manter a genera
 		\State{$m$ = \textbf{createpde}(1);}
 		\State{\textbf{geometryFromEdges}($m$,$g$);}
 		\State{\textbf{generateMesh}($m$, 'Hmax',$valHmax$);}
-		\State{[$p$,$e$,$t$] = \textbf{meshToPet}($m.Mesh$);}
+		\State{($p$,$e$,$t$) = \textbf{meshToPet}($m.Mesh$);}
 		\State{$C$ = geraMatElementares($p$, $t$);}
 		\State{$G$ = geraMatGlobal($C$, $t$);}
-		\State{[$A$, $b$] = atribuiContorno($G$, $dadosContorno$);}
+		\State{($A$, $b$) = atribuiContorno($G$, $dadosContorno$);}
 		\State{$sol$ = resolveSistLinear($A$,$b$);}
 		\State{\textbf{pdeplot}($m$,...);}
 	\end{algorithmic}
@@ -769,21 +769,59 @@ A fim de não tirar proveito das funções do \matlab de forma a manter a genera
  
 
 
-A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações na solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método dos gradientes conjugados proposta por \citeonline{Barrett1995}. 
+A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações na solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método do gradiente conjugado proposta por \citeonline{Barrett1995}. O CG como explicitado no referencial teórico, é um método iterativo não estacionário do subespaço de Krylov. Como coloca \citeonline{Wathen1989}, o uso de métodos iterativos se tornou competitivo à medida em que os sistemas de equações se tornavam maiores. A técnica EBE foi proposta por \citeonline{Hughes1983} como como sendo um precondicionador para o CG de forma a possibilitar que as computações sejam realizadas no nível elementar \cite{Kiss2012} de forma a possibilitar a vetorização (ou paralelização) e a economia de memória.
 
-A motivação da escolha do \textit{solver} do \matlab (``$\setminus$'' ou $mldivide$) está no fato de ele utilizar diferentes algoritmos dependendo da estrutura da matriz de coeficientes, tais como simetria e esparsidade \cite{matMldivide}. Especificamente para o problema deste trabalho, cuja matriz é Hermitiana (auto-adjunta) e positiva definida, o \textit{solver} adota a fatoração LDL ou a fatoração de Cholesky.
+A motivação da escolha do \textit{solver} do \matlab (``$\setminus$'' ou $mldivide$) está no fato de ele utilizar diferentes algoritmos dependendo da estrutura da matriz de coeficientes, tais como simetria e esparsidade \cite{matMldivide}. Especificamente para o problema deste trabalho, cuja matriz é Hermitiana (auto-adjunta) e positiva definida, o \textit{solver} adota a fatoração de Cholesky ou a LDL.
 
-A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++.
+A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++. O pseudocódigo do CG é apresentado em \ref{alg:CG} e a descrição de cada etapa é apresentada na seção \ref{sec:CG} da fundamentação teórica.
+
+\begin{algorithm}	
+	\caption{\label{alg:CG}Pseudocódigo do CG} 
+	\begin{algorithmic}[1]
+		\State{$x_{0}$ = $\{0\}$}
+		\State{$r_{0}$ = $b - Ax_{0}$}
+		\For{i = 1,2...}
+			\State{$z_{i-1}$ = resolve($M$, $r_{i-1}$)}
+			\State{$\rho_{i-1}$ = ${r_{i-1}}^{T}z_{i-1}$}
+			\If{i = 1}
+				\State{$p_1$ = $z_0$}
+				\Else
+				\State{$\beta_{i-1}$ = $\rho_{i-1}$ / $\rho_{i-2}$}
+				\State{$p_{i}$ = $z_{i-1}$ + $\beta_{i-1}p_{i-1}$}
+			\EndIf	
+			\State{$q_i$ = $Ap_i$}
+			\State{$\alpha_{i}$ = $\rho_{i-1}$ / ${p_{i}}^Tq_i$}
+			\State{$x_{i}$ = $x_{i-1}$ + $\alpha_{i}p_{i}$}
+			\State{$r_{i}$ = $r_{i-1}$ - $\alpha_{i}q_{i}$}
+			\If{converge($r$,$tol$)}
+				\State{break}
+			\EndIf
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
 
 
 
 
 
-\subsection{Aplicação das estratégias}
+\subsection{Implementação do EBE-FEM}
+A implementação do EBE-FEM consiste basicamente em antecipar a solução do sistema de equações, passando da montagem das matrizes elementares diretamente para a atribuição das condições de contorno e solução do sistema, sem que seja necessária a montagem da matriz de coeficientes global. Para realizar esta mudança de rota na solução do problema é necessário modificar tanto o algoritmo quanto a estrutura de dados utilizados.
+
+A adaptação do bloco referente à atribuição das condições de contorno (linha $11$ do algoritmo \ref{alg:FEM}) é baseada na abordagem proposta por  \citeonline{Xu2005} a qual consiste na criação de vetores \textit{rhs} (\textit{right hand side}) elementares. Ao invés de se atribuir os valores de contorno às células do vetor \textit{rhs} global que correspondem à cada nó da malha, a atribuição é feita no nível elementar. Por exemplo, se um nó compartilhado por $2$ elementos possui valor de contorno igual a $10$, a atribuição é feita como uma média no vetor \textit{rhs} de cada um dos $2$ elementos. Assim sendo, cada vetor recebe o valor de contorno igual a $5$. A figura \ref{fig:contornoEBE} contém o esquema que ilustra este exemplo. \citeonline{Yan2017} e \citeonline{Wu2015} propõe uma abordagem parecida baseada não no número de conexões do nó, mas na média ponderada do valor de contorno original pelos coeficientes de cada elemento que contém o nó. 
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=0.8]{figuras/contorno.pdf}
+	\caption{Esquema da aplicação das condições de contorno de um elemento}
+	\label{fig:contornoEBE}
+\end{figure}
+
+De posse das matrizes e vetores elementares e dos vetores 
 
 \section{Resultados preliminares}
 A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, o refinamento da malha do objeto gerada pela função generateMesh é feito de forma diferente, por meio da alteração do parâmetro \textit{Hmax} que estabelece o tamanho máximo de cada aresta. A vantagem dessa abordagem é o maior controle das propriedades da malha, como por exemplo a quantidade de elementos, no entanto, a desvantagem é que a cada alteração neste parâmetro uma nova malha é gerada, em diferentes pontos. Dessa forma, não se pode precisar com exatidão do valor em cada um dos pontos de referência apresentados nas figuras \ref{fig:solPde}{(c)} e \ref{fig:solPde}{(d)}, no entanto, a corretude da aproximação pode ser verificada na média pelos nós que estão entorno de cada ponto de referência ou ainda considerando o valor do nó mais próximo. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Foram adotadas regiões quadradas de lado igual a $3mm$, $5mm$ e $10mm$, de acordo com a localização do ponto de referencia.
 
+\iffalse
 \begin{figure}%
 	\centering	
 	\subfloat[Refinamento com $Hmax = 0.6$]{{\includegraphics[scale=0.5]{figuras/viz0_6.pdf} }}%
@@ -792,7 +830,7 @@ A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que co
 	\caption{Vizinhança dos pontos de referência}%
 	\label{fig:vizinha}%
 \end{figure}
-
+\fi
 
 
 
