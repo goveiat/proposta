@@ -65,6 +65,7 @@
 
 %Espaçamento em formulas e tabelas
 \renewcommand{\arraystretch}{1.3}
+\newcommand{\matlab}{MATLAB\textsuperscript{\textregistered}}
 % --- 
 % CONFIGURAÇÕES DE PACOTES
 % --- 
@@ -352,7 +353,7 @@ Resumo...
 	Após a geração do sistema de equações serão atribuídas a seus respectivos nós, as condições de contorno de Dirichlet prescritas no enunciado do problema. 
 	
 	\subsection{Processamento}
-	O sistema de linear obtido na etapa de pré-processamento do método clássico será submetido ao solver do MATLAB\textsuperscript{\textregistered} e a algoritmos diretos e iterativos do framework implementado por \citeonline{Barrett1995} a fim de se realizar uma análise quantitativa dos métodos sequenciais. 
+	O sistema de linear obtido na etapa de pré-processamento do método clássico será submetido ao solver do \matlab e a algoritmos diretos e iterativos do framework implementado por \citeonline{Barrett1995} a fim de se realizar uma análise quantitativa dos métodos sequenciais. 
 	
 	\section{Método EbE}
 	\subsection{Pré-processamento}
@@ -381,7 +382,7 @@ A justificativa deste trabalho se baseia na contínua transformação dos paradi
 
 	\begin{itemize}
 		\item Demonstrar o processo de mudança do paradigma sequencial para uma solução paralela do método do elementos finitos;
-		\item Avaliar quantitativamente, segundo as métricas propostas (tempo de execução, uso de memória, precisão e \textit{speedup}) o desempenho das soluções de um modelo de elementos finitos;
+		\item Avaliar quantitativamente, segundo as métricas propostas (tempo de execução, uso de memória, e \textit{speedup}) o desempenho das soluções de um modelo de elementos finitos;
 		\item Apresentar à comunidade resultados acadêmicos experimentais do desempenho das  linguagens C++11, Scala e Erlang.
 	\end{itemize}
 		
@@ -389,7 +390,7 @@ A justificativa deste trabalho se baseia na contínua transformação dos paradi
 \section{Objetivos Específicos}
 
 	\begin{itemize}
-		\item Investigar a viabilidade da técnica EbE-FEM como alternativa dos \textit{solvers} iterativos e do solver do  MATLAB\textsuperscript{\textregistered};
+		\item Investigar a viabilidade da técnica EbE-FEM como alternativa dos \textit{solvers} iterativos e do solver do  \matlab;
 		\item Desenvolver um material acessível e de fácil compreensão de introdução ao FEM para o nível da graduação;
 		\item Investigar o quão otimizada é a convergência do EbE a partir do emprego de diferentes precondicionadores;		
 		\item Relacionar as métricas e conceitos de estatísticas necessários para a avaliação adequada de performance;
@@ -632,34 +633,29 @@ Método da colocação & $ \delta(x - x_i)  $
 O desenvolvimento deste trabalho está  dividido nas etapas de \textit{validação do problema} e \textit{aplicação das estratégias}. Na primeira são apresentados os recursos utilizados para modelar o problema e para definir as possíveis estratégias de solução. De posse das informações obtidas nesta etapa, são definidos na etapa seguinte os métodos e as estruturas de dados adotados em cada linguagem de programação e arquitetura de processamento.
 
 \section{Materiais e métodos}
-O ambiente de desenvolvimento MATLAB\textsuperscript{\textregistered} foi adotado para a realização da etapa de validação do problema. A motivação dessa escolha se deu pela facilidade da manipulação de matrizes oferecida pelo ambiente e pela existência de ferramentas dedicadas à especificação de PVCs e à programação paralela.
-A aplicação das estratégias propostas na etapa de validação nas linguagens e arquiteturas adotadas neste trabalho é feita pela adequação da sintaxe e do paradigma de programação da implementação realizada no MATLAB\textsuperscript{\textregistered}. 
+O ambiente de desenvolvimento \matlab foi adotado para a realização da etapa de validação do problema. A motivação dessa escolha se deu pela facilidade da manipulação de matrizes oferecida pelo ambiente e pela existência de ferramentas dedicadas à especificação de PVCs e à programação paralela.
+A aplicação das estratégias propostas na etapa de validação nas linguagens e arquiteturas adotadas neste trabalho é feita pela adequação da sintaxe e do paradigma de programação da implementação realizada no \matlab. 
 
 \subsection{Especificação da geometria}
-O problema \textit{benchmark} utilizado neste trabalho é o exemplo $10.3$ do livro Análise de Circuitos de \citeonline{boylestad2011} e é ilustrado na figura \ref{fig:placas}. O capacitor é composto de duas placas quadradas paralelas com lado de $2$ polegadas, cuja distância entre elas é de $\frac{1}{32}$ polegadas. O problema informa que a diferença de potencial entre as placas é de $48V$, dessa forma foi assumido que uma das placas possui $48V$ e e que a outra está aterrada.
+O problema \textit{benchmark} utilizado neste trabalho é o exemplo $10.3$ do livro Análise de Circuitos de \citeonline{boylestad2011} e é ilustrado na figura \ref{fig:mesh}{(a)}. O capacitor é composto de duas placas quadradas paralelas com lado de $2$ polegadas, cuja distância entre elas é de $\frac{1}{32}$ polegadas. O problema informa que a diferença de potencial entre as placas é de $48V$, dessa forma foi assumido que uma das placas possui $48V$ e e que a outra está aterrada.
 
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[scale=0.9]{figuras/placas.pdf}
-	\caption{Capacitor de placas paralelas}
-	\label{fig:placas}
-\end{figure}
-
-A fim de se realizar uma análise mais ampla do problema a distribuição do campo elétrico será calculada entre as placas mas também no espaço ao redor. Será considerada uma região quadrada de $16cm$ de lado como mostra o esquema na figura \ref{fig:mesh}{(a)}. Também foi considerado que a espessura de cada placa é a metade da largura da região entre elas, ou seja, $\frac{1}{64}$ polegadas.
+A fim de se realizar uma análise mais ampla do problema a distribuição do campo elétrico será calculada entre as placas mas também no espaço ao redor. Será considerada uma região quadrada de $16cm$ de lado como mostra o esquema na figura \ref{fig:mesh}{(b)}. Também foi considerado que a espessura de cada placa é a metade da largura da região entre elas, ou seja, $\frac{1}{64}$ polegadas.
 
 
-A fim de se obter um parâmetro da corretude dos resultados obtidos neste trabalho, foi feita a simulação do problema na \textit{partial differential equation toolbox} do MATLAB\textsuperscript{\textregistered}. Por meio dessa ferramenta é possível programaticamente e via interface gráfica definir a equação diferencial que rege o problema, a geometria, as condições de contorno, a malha inicial e seus refinamentos bem como a solução e exibição dos resultados do PVC. As figuras \ref{fig:mesh}{(b)} e \ref{fig:mesh}{(c)} mostram a geometria e a malha inicial modeladas com o auxílio da interface gráfica da \textit{pdetool}.
+A fim de se obter um parâmetro da corretude dos resultados obtidos neste trabalho, foi feita a simulação do problema na \textit{partial differential equation toolbox} do \matlab. Por meio dessa ferramenta é possível programaticamente e via interface gráfica definir a equação diferencial que rege o problema, a geometria, as condições de contorno, a malha inicial e seus refinamentos bem como a solução e exibição dos resultados do PVC. As figuras \ref{fig:mesh}{(c)} e \ref{fig:mesh}{(d)} mostram a geometria e a malha inicial modeladas com o auxílio da interface gráfica da \textit{pdetool}.
 
 \subsection{Obtenção dos valores de referência}
 
 
 \begin{figure}%
 	\centering
-	\subfloat[Esquema da região de análise]{{\includegraphics[scale=0.5]{figuras/espaco.pdf} }}%
+	\subfloat[Perspectiva do capacitor de placas paralelas]{{\includegraphics[scale=0.8]{figuras/placas.pdf} }}%
 	\qquad	
-	\subfloat[Região de análise com malha]{{\includegraphics[scale=0.4]{figuras/mesh.pdf} }}%
+	\subfloat[Esquema da região de análise]{{\includegraphics[scale=0.4]{figuras/espaco.pdf} }}%
+	\qquad	
+	\subfloat[Região de análise com malha]{{\includegraphics[scale=0.5]{figuras/mesh.pdf} }}%
 	\qquad
-	\subfloat[Zoom sobre as placas do capacitor]{{\includegraphics[scale=0.4]{figuras/mesh_zoom.pdf} }}%
+	\subfloat[Zoom sobre as placas do capacitor]{{\includegraphics[scale=0.5]{figuras/meshzoom.pdf} }}%
 	\caption{Geometria do capacitor de placas paralelas}%
 	\label{fig:mesh}%
 \end{figure}
@@ -681,9 +677,9 @@ Na equação de Laplace, que modela a distribuição do potencial elétrico, ape
 	\qquad
 	\subfloat[Distribuição do potencial entre as placas]{{\includegraphics[scale=0.4]{figuras/potzoom.pdf} }}%
 	\qquad
-	\subfloat[Pontos de referência do potencial elétrico]{{\includegraphics[scale=0.4]{figuras/valpot2.pdf} }}%
+	\subfloat[Pontos de referência do potencial elétrico]{{\includegraphics[scale=0.45]{figuras/valpot2.pdf} }}%
 	\qquad
-	\subfloat[Pontos de referência do campo elétrico]{{\includegraphics[scale=0.4]{figuras/valCampo.pdf} }}%
+	\subfloat[Pontos de referência do campo elétrico]{{\includegraphics[scale=0.5]{figuras/valCampo.pdf} }}%
 	\caption{Solução do PVC com a \textit{pdetool}}%
 	\label{fig:solPde}%
 \end{figure}
@@ -692,7 +688,26 @@ De posse da solução da \textit{pdetool}, foram tomados $8$ pontos de referênc
 
 \subsection{Implementação do FEM}
 Após a simulação e obtenção dos valores de referência foi realizada a implementação do método dos elementos finitos em duas dimensões, conforme o apresentado na seção \ref{sec:fem2d} do referencial teórico.
-A fim de não tirar proveito das funções do MATLAB\textsuperscript{\textregistered} de forma a manter a generalidade da solução implementada e a facilidade de transcrevê-la para outras linguagens, foram utilizadas nos algoritmos deste trabalho apenas as funções da \textit{PDE toolbox} relativas à geometria, geração da malha e exibição dos resultados. No pseudocódigo \ref{alg:FEM} as palavras destacadas em itálico são variáveis, as funções destacadas em negrito fazem parte do MATLAB\textsuperscript{\textregistered} e as funções descritas nas linhas de $9$ a $12$ são detalhadas no exemplo da seção \ref{sec:fem2d}. A tabela \ref{tab:matlabFun} contém a descrição das funções utilizadas.
+A fim de não tirar proveito das funções do \matlab de forma a manter a generalidade da solução implementada e a facilidade de transcrevê-la para outras linguagens, foram utilizadas nos algoritmos deste trabalho apenas as funções da \textit{PDE toolbox} relativas à geometria, geração da malha e exibição dos resultados. No pseudocódigo \ref{alg:FEM} as palavras destacadas em itálico são variáveis, as funções destacadas em negrito fazem parte do \matlab e as funções descritas nas linhas de $9$ a $12$ são detalhadas no exemplo da seção \ref{sec:fem2d}. A tabela \ref{tab:matlabFun} contém a descrição das funções utilizadas.
+
+\begin{algorithm}	
+	\caption{\label{alg:FEM}Pseudocódigo do FEM} 
+	\begin{algorithmic}[1]
+		\State{\textbf{load}($dadosGeometria$);}
+		\State{\textbf{load}($coordReferencia$);}
+		\State{\textbf{load}($dadosContorno$);}
+		\State{$g$ = \textbf{decsg}($dadosGeometria$);}
+		\State{$m$ = \textbf{createpde}(1);}
+		\State{\textbf{geometryFromEdges}($m$,$g$);}
+		\State{\textbf{generateMesh}($m$, 'Hmax',$valHmax$);}
+		\State{[$p$,$e$,$t$] = \textbf{meshToPet}($m.Mesh$);}
+		\State{$C$ = geraMatElementares($p$, $t$);}
+		\State{$G$ = geraMatGlobal($C$, $t$);}
+		\State{[$A$, $b$] = atribuiContorno($G$, $dadosContorno$);}
+		\State{$sol$ = resolveSistLinear($A$,$b$);}
+		\State{\textbf{pdeplot}($m$,...);}
+	\end{algorithmic}
+\end{algorithm}
 
 
 \begin{table}[!ht]   
@@ -740,7 +755,7 @@ A fim de não tirar proveito das funções do MATLAB\textsuperscript{\textregist
 		\\
 		\hline
 		resolveSistLinear
-		& Ponto da principal contribuição deste trabalho e consiste na aplicação de métodos numéricos para a solução eficiente de sistemas lineares esparsos.
+		& Consiste na aplicação de métodos numéricos para a solução eficiente de sistemas lineares esparsos.
 		\\
 		\hline		 
 		\textbf{pdePlot}  
@@ -752,31 +767,31 @@ A fim de não tirar proveito das funções do MATLAB\textsuperscript{\textregist
 	\label{tab:matlabFun}
 \end{table}
  
-\begin{algorithm}	
-	\caption{\label{alg:FEM}Pseudocódigo do FEM} 
-	\begin{algorithmic}[1]
-		\State{\textbf{load}($dadosGeometria$);}
-		\State{\textbf{load}($coordReferencia$);}
-		\State{\textbf{load}($dadosContorno$);}
-		\State{$g$ = \textbf{decsg}($dadosGeometria$);}
-		\State{$m$ = \textbf{createpde}(1);}
-		\State{\textbf{geometryFromEdges}($m$,$g$);}
-		\State{\textbf{generateMesh}($m$, 'Hmax',$valHmax$);}
-		\State{[$p$,$e$,$t$] = \textbf{meshToPet}($m.Mesh$);}
-		\State{$C$ = geraMatElementares($p$, $t$);}
-		\State{$G$ = geraMatGlobal($C$, $t$);}
-		\State{[$A$, $b$] = atribuiContorno($G$, $dadosContorno$);}
-		\State{$sol$ = resolveSistLinear($A$,$b$);}
-		\State{\textbf{pdeplot}($m$,...);}
-	\end{algorithmic}
-\end{algorithm}
+
+
+A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações na solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método dos gradientes conjugados proposta por \citeonline{Barrett1995}. 
+
+A motivação da escolha do \textit{solver} do \matlab (``$\setminus$'' ou $mldivide$) está no fato de ele utilizar diferentes algoritmos dependendo da estrutura da matriz de coeficientes, tais como simetria e esparsidade \cite{matMldivide}. Especificamente para o problema deste trabalho, cuja matriz é Hermitiana (auto-adjunta) e positiva definida, o \textit{solver} adota a fatoração LDL ou a fatoração de Cholesky.
+
+A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++.
+
+
 
 
 
 \subsection{Aplicação das estratégias}
 
 \section{Resultados preliminares}
+A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, o refinamento da malha do objeto gerada pela função generateMesh é feito de forma diferente, por meio da alteração do parâmetro \textit{Hmax} que estabelece o tamanho máximo de cada aresta. A vantagem dessa abordagem é o maior controle das propriedades da malha, como por exemplo a quantidade de elementos, no entanto, a desvantagem é que a cada alteração neste parâmetro uma nova malha é gerada, em diferentes pontos. Dessa forma, não se pode precisar com exatidão do valor em cada um dos pontos de referência apresentados nas figuras \ref{fig:solPde}{(c)} e \ref{fig:solPde}{(d)}, no entanto, a corretude da aproximação pode ser verificada na média pelos nós que estão entorno de cada ponto de referência ou ainda considerando o valor do nó mais próximo. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Foram adotadas regiões quadradas de lado igual a $3mm$, $5mm$ e $10mm$, de acordo com a localização do ponto de referencia.
 
+\begin{figure}%
+	\centering	
+	\subfloat[Refinamento com $Hmax = 0.6$]{{\includegraphics[scale=0.5]{figuras/viz0_6.pdf} }}%
+	\qquad
+	\subfloat[Refinamento com $Hmax = 0.2$]{{\includegraphics[scale=0.5]{figuras/viz0_2.pdf} }}%
+	\caption{Vizinhança dos pontos de referência}%
+	\label{fig:vizinha}%
+\end{figure}
 
 
 
