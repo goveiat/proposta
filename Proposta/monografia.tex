@@ -402,14 +402,6 @@ A justificativa deste trabalho se baseia na contínua transformação dos paradi
 Espera-se com este trabalho iniciar no CEFET-MG campus Timóteo uma nova linha de pesquisa a ser continuada nos trabalhos futuros, voltada para a análise numérica de problemas de valor de contorno da física aplicada. De forma similar, espera-se o incentivo e a adoção por parte da universidade de paradigmas e linguagens emergentes, de forma a diversificar o currículo dos graduandos.
 
 
-\chapter{Cronograma}
-	\begin{itemize}
-		\item \textbf{27/07} - Entrega do texto do Referencial teórico e revisão bibliográfica;
-		\item \textbf{31/07} - Entrega dos resultados preliminares;	
-		\item \textbf{03/08} - Entrega do texto para a banca
-		\item \textbf{17/08}  - Apresentação					
-	\end{itemize}
-
 \chapter{Estado da arte}
 Como coloca \citeonline{Kiss2012}, o processamento paralelo de um problema modelado pelo FEM pode ser feito a partir da decomposição do domínio do problema. Esta decomposição pode ser feita por meio do particionamento da malha que representa o domínio do problema ou por meio da decomposição apropriada da matriz de coeficientes.
 Os trabalhos de \citeonline{Boehmer2011} e \citeonline{Ahamed2016} apresentam a solução paralela do FEM por meio do particionamento da malha. No primeiro caso o processamento é executado comparativamente nas arquiteturas de memória compartilhada e distribuída com o uso da API OpenMP e da biblioteca MPI respectivamente.
@@ -485,14 +477,14 @@ No entanto, a maioria dos problemas da engenharia e da ciência não são linear
 O método dos elementos finitos (FEM) é uma alternativa numérica para a solução de PVCs.Neste método, o domínio do problema é visto como uma coleção de subdomínios, chamados de elementos finitos, sobre os quais, a equação que modela o problema é aproximada por um método variacional ou de resíduos ponderados \citeonline{reddy}. Essas diferentes vertentes do método surgiram graças aos esforços independentes de matemáticos, cientistas e engenheiros \cite{zien}. 
 
 O método das diferenças finitas (FDM) assim como o FEM é uma abordagem numérica para a aproximação de PVCs. Este método consiste na discretização do domínio do problema por meio de uma grade de pontos e na aproximação de cada derivada da equação por um quociente-diferença adequado
-\cite{burdenFaires}. Embora este método seja útil em muitos casos, se torna difícil aplicá-lo em problemas com geometria irregular ou com condições de contorno não usuais.
+\cite{burdenFaires}. Embora este método seja útil em muitos casos, se torna difícil aplicá-lo em problemas com geometria irregular ou com condições de contorno não usuais. Um exemplo pode ser visto na figura \ref{fig:mdfFem}.
 
 Diferentemente do FDM, como coloca \citeonline{huebner}, o FEM divide o domínio não em pontos, mas em subdomínios, sobre os quais as equações são aproximadas por polinômios definidos por partes. O FEM também é capaz de representar mais fielmente o contorno (ou a borda) do problema. Desta forma, ele se apresenta como uma técnica mais poderosa e versátil para a modelagem de fenômenos com geometria complexa e meios não homogêneos \cite{sadiku}. 
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=0.5]{figuras/fdm_fem.pdf}
-	\caption{a)Método das diferenças Finitas b) método dos Elementos Finitos}
+	\caption{Método das diferenças Finitas e método dos Elementos Finitos}
 	\label{fig:mdfFem}
 \end{figure}
 
@@ -520,7 +512,7 @@ Um fator que deve ser levado em consideração é o balanceamento entre o refina
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[scale=1]{figuras/id.pdf}
+	\includegraphics[scale=1.2]{figuras/id.pdf}
 	\caption{Identificadores de elementos e nós}
 	\label{fig:numeracao}
 \end{figure}
@@ -902,7 +894,7 @@ Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que e
 		\State{$b$ = $\{0\}$}
 		\For{c = 1,2...$|cores|$}	
 		\State{$triCor = cores(c)$}					
-		\For{j = 1,2...$N$}
+		\For{j = 1,2...$|triCor|$}
 		\State{$idG = triCor(j)$}
 		\State{$map = tri(idG)$}
 		\State{$b(map) = b(map) + b_e(idG)$}
@@ -916,7 +908,7 @@ Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que e
 A fim de manter a conformidade com o ambiente de desenvolvimento optou-se por utilizar a \textit{parallel Computing toolbox} do \matlab. Esta ferramenta possibilita a implementação para plataformas \textit{multicore}, GPUs, \textit{clusters}, \textit{grids} e \textit{cloud}. De acordo com a documentação do \matlab \cite{matMulticore}, funções de álgebra linear como $fft$, $mldivide$, $eig$, $svd$, e $sort$
 são \textit{multithread} desde a versão R2018a. No entanto, é possível melhorar a performance de funções customizadas por meio da \textit{parallel toolbox}.
 
-A fim de garantir a robustez do código paralelizado, o \matlab disponibiliza a programação em múltiplos \textit{workers} ao invés de \textit{threads}. Cada \textit{worker} é um processo que trabalha em função do processo principal (\textit{client}) que o originou. Desta forma, as tarefas são divididas entre os \textit{workers} e coordenadas pelo \textit{client}, num modelo do tipo mestre-escravo. A fim de evitar condições de corrida e o \textit{overhead} de comunicação entre os processos, a ferramenta trabalha por meio da distribuição ao invés do compartilhamento de memória. Assim sendo, os dados são copiados para cada \textit{worker} e ao final do processamento, agregados novamente no \textit{client}. A tabela \ref{tab:partool} contém a descrição das funções utilizadas da \textit{parallel toolbox}.
+A fim de garantir a robustez do código paralelizado, o \matlab disponibiliza a programação em múltiplos \textit{workers} ao invés de \textit{threads}. Cada \textit{worker} é um processo que trabalha em função do processo principal (\textit{client}) que o originou. Desta forma, as tarefas são divididas entre os \textit{workers} e coordenadas pelo \textit{client}, num modelo mestre-escravo. A fim de evitar condições de corrida e o \textit{overhead} de comunicação entre os processos, a ferramenta trabalha por meio de distribuição e troca de mensagens (MPI) ao invés do compartilhamento de memória. Assim sendo, os dados são copiados para cada \textit{worker} e ao final do processamento, agregados novamente no \textit{client}. A tabela \ref{tab:partool} contém a descrição das funções utilizadas da \textit{parallel toolbox}.
 
 
 \begin{table}[!ht]   
@@ -944,7 +936,7 @@ A fim de garantir a robustez do código paralelizado, o \matlab disponibiliza a 
 		\\
 		\hline		
 		\textbf{codistributed} 
-		& Propriedade que informa que uma coleção de dados deve ser distribuída entre os \textit{workers} e não copiada integralmente.
+		& Cria uma coleção que é distribuída entre os \textit{workers} e não copiada integralmente.
 		\\
 		\hline		 
 		\textbf{getLocalPart} 
@@ -964,9 +956,63 @@ A fim de garantir a robustez do código paralelizado, o \matlab disponibiliza a 
 		\\
 		\hline	
 	\end{tabular}
-	\caption{Descrição das funções utilizadas no algoritmo do FEM}
+	\caption{Descrição das funções utilizadas na paralelização do EbE-FEM}
 	\label{tab:partool}
 \end{table}
+
+Para que a paralelização do código ocorra por meio das funções \textit{parfor} e \textit{spmd} é necessário que a estrutura de dados da coloração seja modificada, a fim de que possa ser ``fatiada'' e distribuída entre os \textit{workers}. Como pode ser visto nos algoritmos de \ref{alg:ebeCorCG1} a \ref{alg:ebeCorCG3}, as variáveis globais são indexadas pela variável $map$, que contém a lista dos identificadores de cada nó do elemento, como por exemplo $\{25 \ 12 \ 96\}$. Como estes índices não são contíguos, ocorre um erro durante a compilação do \textit{parfor} e o \textit{overhead} de comunicação no \textit{spmd}. Esta restrição do \matlab demanda uma nova adaptação da estrutura de dados e impede que a atribuição às variáveis globais seja feita de forma paralela.
+
+A nova estrutura de dados gerada durante a coloração já retorna o vetor $b$ (ou $rhs$) completo, dessa forma, não há a necessidade do processo de montagem à partir dos vetores elementares, como descrito nos algoritmos \ref{alg:ebeCG3} e \ref{alg:ebeCorCG3}. Além dessa melhoria, o objeto retornado da coloração possui para cada cor, as matrizes elementares e o vetor $rhs$ referente aos elementos da cor. Em resumo, a nova abordagem retorna os próprios objetos que serão utilizados na paralelização ao invés do seu ``endereço'' na malha. Os pseudocódigos \ref{alg:ebeParCG1} e \ref{alg:ebeSpmdCG1} mostram a aplicação das funções \textit{parfor} e \textit{spmd} no algoritmo \ref{alg:ebeCorCG1}. A mesma adaptação é feita para o algoritmo \ref{alg:ebeCorCG2}.
+
+
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeParCG1}Aplicação do \textit{parfor} no algoritmo \ref{alg:ebeCorCG1}} 
+	\begin{algorithmic}[1]
+		\For{c = 1,2...$|cores|$}
+		\State{$matElCor = cores(c).matEl$}
+		\State{$rhsCor = cores(c).rhs$}		
+		\State{$R = reshape(r(rhsCor),3,[ \ ])$}
+		\State{\textbf{PARFOR}}	
+		\For{j = 1,2...$|cores(c)|$}
+		\State{$M_e = precond(matElCor(j))$}
+		\State{$Z = M_eR(j)$}
+		\EndFor
+		\State{\textbf{END PARFOR}}
+		\State{$z(rhsCor) = z(rhsCor) + reshape(Z,1,[ \ ])$}
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}	
+	\caption{\label{alg:ebeSpmdCG1}Aplicação do \textit{spmd} no algoritmo. \ref{alg:ebeCorCG1}} 
+	\begin{algorithmic}[1]
+		\For{c = 1,2...$|cores|$}
+		\State{$matElCor = cores(c).matEl$}
+		\State{$rhsCor = cores(c).rhs$}		
+		\State{$R = reshape(r(rhsCor),3,[ \ ])$}
+		\State{\textbf{SPMD}}
+		\State{$codMat = codistributor(formaDistMat)$}
+		\State{$MatDist=codistributed(matElCor,codMat)$}	
+		\State{$codR = codistributor(formaDistR)$}
+		\State{$RDist = codistributed(R,codR)$}
+
+		\State{$MatPart = getLocalPart(MatDist)$}
+		\State{$RPart = getLocalPart(RDist)$}
+		\For{j = 1,2...$qtdWorkers$}
+		\For{k = 1,2...$|cores(c)|$}
+		\State{$M_e = precond(MatPart(j,k))$}
+		\State{$Z = M_eRPart(j,k)$}
+		\EndFor
+		\EndFor
+		\State{\textbf{END SPMD}}
+		\State{$z(rhsCor) = z(rhsCor) + reshape(Z,1,[ \ ])$}
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+Enquanto a paralelização por \textit{parfor} é feita elemento a elemento, a função \textit{spmd} distribui o processamento em $q$ partes, sendo $q$ a quantidade de \textit{workers}. Cada \textit{worker} executa sequencialmente a parcela do problema que lhe é atribuída. Conforme a recomendação da documentação, para se obter melhor desempenho, a quantidade de \textit{workers} deve ser a mesma de núcleos físicos do processador. Ao se utilizar o bloco $for-drange$ na linha $13$ ao invés do $for$ convencional, o comportamento do $spdm$ passa a ser equivalente ao do $parfor$.
+
 
 \section{Resultados preliminares}
 A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, o refinamento da malha do objeto gerada pela função generateMesh é feito de forma diferente, por meio da alteração do parâmetro \textit{Hmax} que estabelece o tamanho máximo de cada aresta. A vantagem dessa abordagem é o maior controle das propriedades da malha, como por exemplo a quantidade de elementos, no entanto, a desvantagem é que a cada alteração neste parâmetro uma nova malha é gerada, em diferentes pontos. Dessa forma, não se pode precisar com exatidão do valor em cada um dos pontos de referência apresentados nas figuras \ref{fig:solPde}{(c)} e \ref{fig:solPde}{(d)}, no entanto, a corretude da aproximação pode ser verificada na média pelos nós que estão entorno de cada ponto de referência ou ainda considerando o valor do nó mais próximo. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Foram adotadas regiões quadradas de lado igual a $3mm$, $5mm$ e $10mm$, de acordo com a localização do ponto de referencia.

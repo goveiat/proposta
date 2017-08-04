@@ -2,7 +2,7 @@ clc
 clear
 
 % ebe | ebe_cor | ebe_cor | ebe_cor_par | ebe_cor_spmd | ebe_ot
-alg = 'ebe';
+alg = 'ebe_cor_par';
 ref = 1;
 
 load('pdetool/geometry.mat');
@@ -58,8 +58,9 @@ end
 
 toc;
 
+
 % Impressões
-COLOR =     1;
+COLOR =     0;
 MESH =      0;
 POT2D =     0;
 POT3D =     1;
