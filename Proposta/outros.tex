@@ -1,0 +1,24 @@
+	\section{Método Clássico}
+	\subsection{Pré-processamento}
+	
+	A equação diferencial originada do PVC será resolvida em sua forma fraca, por meio da aproximação com polinômios lineares\cite{jin}. Em especial, será utilizado o método de Galerkin, cujas funções de base para os espaços de elementos finitos coincidem com as funções de aproximação \cite{jin}. Cada função de base é definida sobre o domínio de um elemento finito, o qual é obtido por meio da discretização  do domínio do problema. Para favorecer a precisão dos resultados a discretização será feita na forma de triangulação de Delaunay.	
+	Após a geração do sistema de equações serão atribuídas a seus respectivos nós, as condições de contorno de Dirichlet prescritas no enunciado do problema. 
+	
+	\subsection{Processamento}
+	O sistema de linear obtido na etapa de pré-processamento do método clássico será submetido ao solver do \matlab e a algoritmos diretos e iterativos do framework implementado por \citeonline{Barrett1995} a fim de se realizar uma análise quantitativa dos métodos sequenciais. 
+	
+	\section{Método EbE}
+	\subsection{Pré-processamento}
+	O pré processamento do método EbE é similar ao do método clássico, exceto pelo fato de que a montagem do sistema global não é necessária. Adicionalmente, as condições de contorno também são atribuídas em nível elementar, utilizando-se um senso de média simples ou ponderada em cada nó, conforme apresentado nos trabalhos de \citeonline{Xu2005} e \citeonline{Yan2017} respectivamente. 
+	
+	\subsection{Processamento}
+	O processamento elemento a elemento será realizado pelo método dos gradientes conjugados. Será feita uma análise comparativa do uso ou ausência de precondicionadores (Jacobi e Gauss-Seidel), conforme realizado no trabalho de \citeonline{Yan2017}.
+	A implementação EbE será executada sequencialmente e também concorrentemente por meio e das linguagens C++11, Scala e Erlang, de forma similar ao trabalho de \citeonline{Boehmer2011}
+	
+	\section{Pós-processamento}
+	Na etapa de pós-processamento os resultados de ambos os métodos serão coletados, tabulados e apresentados graficamente. As métricas gerais para uma análise quantitativa de desempenho serão o tempo de execução, consumo de memória e precisão dos resultados.
+	Para o processamento paralelo também será utilizado o \textit{speedup} como métrica. 
+	 Diferentes graus de refinamento da malha serão utilizados, de forma a verificar o limite de memória e e a relação entre o tempo de processamento e o número de nós.
+	 
+	\section{EbE em GPGPU}	
+	 A segunda etapa deste trabalho (TCC II) tem como expectativa a implementação do EbE-FEM GPGPU (General Purpose Graphics Processing Unit) utilizando-se as mesmas métricas da programação \textit{multithreading}. Espera-se que seja possível a implementação nas linguagens CUDA (Compute Unified Device Architecture) e OpenCl(Open Computing Language) a fim de uma nova análise quantitativa, conforme apresentado no trabalho de \citeonline{Ahamed2016}.

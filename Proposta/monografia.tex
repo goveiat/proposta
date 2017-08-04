@@ -328,7 +328,7 @@ Resumo...
 % ----------------------------------------------------------
 % Introdução (exemplo de capítulo sem numeração, mas presente no Sumário)
 % ----------------------------------------------------------
-\chapter{Contextualização}
+\chapter{Introdução}
 	Devido à popularização da computação de alto desempenho (HPC), trabalhos recentes têm retomado problemas tradicionais a fim de adequá-los aos novos paradigmas e arquiteturas de computação. De acordo com \citeonline{Kiss2012} a conformidade entre o problema a ser resolvido e a estrutura do ambiente de execução é capaz de ampliar a performance e reduzir a energia dispendida no processamento.
 	Devido ao aumento da demanda por recursos computacionais, dispositivos que possibilitam a execução paralela acabaram se estabelecendo no mercado da informática.
 	Por meio das arquiteturas \textit{manycore} e \textit{multicore}, é possível se executar paralela ou concorrentemente tanto tarefas corriqueiras como a exibição de vídeos e jogos até cálculos complexos da ciência e da engenharia.
@@ -337,69 +337,47 @@ Resumo...
 	O método dos elementos finitos (FEM) é um método numérico para a resolução de problemas de valor de contorno (PVC) modelados por equações diferenciais e também de problemas associados à minimização de um funcional de energia \cite{Szabo2009}. O algoritmo clássico do FEM foi concebido em sua forma sequencial e consiste principalmente na solução de um sistema linear esparso. A tarefa de se resolver tal sistema é geralmente custosa em termos de memória quando adotados métodos diretos como a eliminação gaussiana e computacionalmente custosa quando adotados métodos iterativos como o método de Jacobi.
 	O método dos gradientes conjugados (CG) e suas variantes pertencem à família dos métodos exatos/iterativos do subespaço de Krylov \cite{Anzt2016} e tem sido adotados na literatura para a solução paralela de elementos finitos. Alguns trabalhos correlatos que utilizam a família CG são apresentados por \citeonline{Yao2015}, \citeonline{Ahamed2016} e \citeonline{Iwashita2017}.
 	
-	A fim de adequar o FEM às arquiteturas modernas será adotado neste trabalho a abordagem elemento a elemento (EbE-FEM) proposta por \citeonline{Hughes1983}. Esta técnica baseia-se no fato de que a matriz do sistema de elementos finitos é caracterizada como uma função parcialmente separável \cite{Dayde1995}, resultado da soma das matrizes elementares. Assim sendo, as operações da solução do sistema de elementos finitos podem ser realizadas a nível elementar, sem a necessidade de se montar a matriz global do sistema. Adicionalmente tem-se a vantagem de que elementos não adjacentes podem ser calculados simultaneamente por meio dos métodos CG \cite{Wathen1989}. Esta última característica torna a técnica EbE-FEM propícia para a implementação paralela nas arquiteturas modernas.
+	A fim de adequar o FEM às arquiteturas modernas será adotado neste trabalho a abordagem elemento a elemento (EbE-FEM) proposta por \citeonline{Hughes1983}. Esta técnica baseia-se no fato de que a matriz do sistema de elementos finitos é caracterizada como uma função parcialmente separável \cite{Dayde1995}, resultado da soma das matrizes elementares. Assim sendo, as operações da solução do sistema de elementos finitos podem ser realizadas em nível elementar, sem a necessidade de se montar a matriz global do sistema. Adicionalmente tem-se a vantagem de que elementos não adjacentes podem ser calculados simultaneamente por meio dos métodos CG \cite{Wathen1989}. Esta última característica torna a técnica EbE-FEM propícia para a implementação paralela nas arquiteturas modernas.
 	
 	
 	
 
 	
-\chapter{Problema}
-	O problema \textit{benchmark} a ser modelado e resolvido como EbE-FEM refere-se à equação de Laplace originada do cálculo da distribuição de potencial e do campo elétrico de um capacitor de placas paralelas \cite[Exemplo 10.3]{boylestad2011}. 
+\section{Problema da Pesquisa}
+	Neste trabalho é feita uma análise quantitativa do desempenho do algoritmo do EbE-FEM nas linguagens concorrentes C++, Erlang e Scala e nas linguagens de computação paralela, CUDA e Harlan.
+	O problema \textit{benchmark} a ser resolvido refere-se à equação de Laplace originada do cálculo da distribuição de potencial e do campo elétrico de um capacitor de placas paralelas \cite[Exemplo 10.3]{boylestad2011}.
+	A escolha deste problema se deve à simplicidade de sua modelagem e ao seu comportamento já explorado em livros de eletromagnetismo e circuitos elétricos.
 	
-	\section{Método Clássico}
-	\subsection{Pré-processamento}
 	
-	A equação diferencial originada do PVC será resolvida em sua forma fraca, por meio da aproximação com polinômios lineares\cite{jin}. Em especial, será utilizado o método de Galerkin, cujas funções de base para os espaços de elementos finitos coincidem com as funções de aproximação \cite{jin}. Cada função de base é definida sobre o domínio de um elemento finito, o qual é obtido por meio da discretização  do domínio do problema. Para favorecer a precisão dos resultados a discretização será feita na forma de triangulação de Delaunay.	
-	Após a geração do sistema de equações serão atribuídas a seus respectivos nós, as condições de contorno de Dirichlet prescritas no enunciado do problema. 
-	
-	\subsection{Processamento}
-	O sistema de linear obtido na etapa de pré-processamento do método clássico será submetido ao solver do \matlab e a algoritmos diretos e iterativos do framework implementado por \citeonline{Barrett1995} a fim de se realizar uma análise quantitativa dos métodos sequenciais. 
-	
-	\section{Método EbE}
-	\subsection{Pré-processamento}
-	O pré processamento do método EbE é similar ao do método clássico, exceto pelo fato de que a montagem do sistema global não é necessária. Adicionalmente, as condições de contorno também são atribuídas em nível elementar, utilizando-se um senso de média simples ou ponderada em cada nó, conforme apresentado nos trabalhos de \citeonline{Xu2005} e \citeonline{Yan2017} respectivamente. 
-	
-	\subsection{Processamento}
-	O processamento elemento a elemento será realizado pelo método dos gradientes conjugados. Será feita uma análise comparativa do uso ou ausência de precondicionadores (Jacobi e Gauss-Seidel), conforme realizado no trabalho de \citeonline{Yan2017}.
-	A implementação EbE será executada sequencialmente e também concorrentemente por meio e das linguagens C++11, Scala e Erlang, de forma similar ao trabalho de \citeonline{Boehmer2011}
-	
-	\section{Pós-processamento}
-	Na etapa de pós-processamento os resultados de ambos os métodos serão coletados, tabulados e apresentados graficamente. As métricas gerais para uma análise quantitativa de desempenho serão o tempo de execução, consumo de memória e precisão dos resultados.
-	Para o processamento paralelo também será utilizado o \textit{speedup} como métrica. 
-	 Diferentes graus de refinamento da malha serão utilizados, de forma a verificar o limite de memória e e a relação entre o tempo de processamento e o número de nós.
-	 
-	\section{EbE em GPGPU}	
-	 A segunda etapa deste trabalho (TCC II) tem como expectativa a implementação do EbE-FEM GPGPU (General Purpose Graphics Processing Unit) utilizando-se as mesmas métricas da programação \textit{multithreading}. Espera-se que seja possível a implementação nas linguagens CUDA (Compute Unified Device Architecture) e OpenCl(Open Computing Language) a fim de uma nova análise quantitativa, conforme apresentado no trabalho de \citeonline{Ahamed2016}.
-	
-\chapter{Justificativa}
+\section{Justificativa}
 
 A justificativa deste trabalho se baseia na contínua transformação dos paradigmas de programação e arquiteturas de hardware. Como coloca \citeonline{Guo2014}, com aumento de núcleos de processamento, ocorre a redução da razão memória por núcleo, o que impõe uma forte demanda para que os algoritmos utilizem eficientemente todos os níveis de paralelismo disponíveis enquanto minimizam a movimentação de dados. Tal evolução não se limita ao cenários dos \textit{clusters} e \textit{grids} mas alcança inclusive os dispositivos móveis, que atualmente já possuem até oito núcleos. Pensando em um futuro próximo, com os avanços da computação ubíqua que introduz temas como internet das coisas, dispositivos "usáveis", realidade aumentada e realidade virtual, a necessidade de se aproveitar ao máximo todo o poder de processamento disponível se torna ainda mais evidente, uma vez que nessas tecnologias há alta demanda de processamento e/ou pouco espaço físico para comportar um processador adequado. A justificativa para a escolha das linguagens C++11, Scala e Erlang se dá devido à ausência de trabalhos acadêmicos relacionando tais tecnologias e seu desempenho. C/C++ é uma linguagem abrangente, robusta e atual, presente por trás de grande parte das aplicações \textit{desktop} e \textit{mobile}. Scala e Erlang (e/ou Elixir \textit{bytecode}) são linguagens naturalmente concorrentes e que possuem crescente \textit{market share} \nocite{erlang}\nocite{scala}.
 
 
-\chapter{Objetivos}
+\section{Objetivos}
 
-\section{Objetivos Gerais}
+\subsection{Objetivos Gerais}
 
 	\begin{itemize}
 		\item Demonstrar o processo de mudança do paradigma sequencial para uma solução paralela do método do elementos finitos;
-		\item Avaliar quantitativamente, segundo as métricas propostas (tempo de execução, uso de memória, e \textit{speedup}) o desempenho das soluções de um modelo de elementos finitos;
-		\item Apresentar à comunidade resultados acadêmicos experimentais do desempenho das  linguagens C++11, Scala e Erlang.
+		\item Avaliar quantitativamente, segundo as métricas propostas (tempo de execução, uso de memória, e \textit{speedup}) o desempenho do processo de solução do EbE-FEM.
+		\item Apresentar à comunidade resultados acadêmicos experimentais do desempenho das  linguagens C++, Scala, Erlang, CUDA e Harlan.
 	\end{itemize}
 		
 
-\section{Objetivos Específicos}
+\subsection{Objetivos Específicos}
 
 	\begin{itemize}
 		\item Investigar a viabilidade da técnica EbE-FEM como alternativa dos \textit{solvers} iterativos e do solver do  \matlab;
 		\item Desenvolver um material acessível e de fácil compreensão de introdução ao FEM para o nível da graduação;
 		\item Investigar o quão otimizada é a convergência do EbE a partir do emprego de diferentes precondicionadores;		
 		\item Relacionar as métricas e conceitos de estatísticas necessários para a avaliação adequada de performance;
-		\item Comparar conforme as métricas o desempenho das linguagens nativamente concorrentes na resolução do problema bechmark proposto neste trabalho.
+		\item Comparar conforme as métricas o desempenho das linguagens nativamente concorrentes e paralelas na resolução do problema \textit{benchmark} proposto neste trabalho.
 	\end{itemize}
 
-\chapter{Resultados Esperados}
+\subchapter{Resultados Esperados}
 
-Espera-se com este trabalho iniciar no CEFET-MG campus Timóteo uma nova linha de pesquisa a ser continuada nos trabalhos futuros, voltada para a análise numérica de problemas de valor de contorno da física aplicada. De forma similar, espera-se o incentivo e a adoção por parte da universidade de paradigmas e linguagens emergentes, de forma a diversificar o currículo dos graduandos.
+Espera-se com este trabalho iniciar no CEFET-MG campus Timóteo uma nova linha de pesquisa a ser continuada nos trabalhos futuros, voltada para a análise numérica de problemas de valor de contorno da física aplicada. De forma similar, espera-se o incentivo e a adoção por parte da universidade de paradigmas e linguagens emergentes, a fim de diversificar o currículo dos graduandos.
 
 
 \chapter{Estado da arte}
