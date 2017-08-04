@@ -863,7 +863,7 @@ Proposta por \citeonline{Wathen1989} e implementada por \citeonline{Kiss2012} a 
 	\label{fig:color}
 \end{figure}
 
-Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que elementos da mesma cor seja executados simultaneamente e elementos de cores distintas sequencialmente. Como elementos de uma determinada cor não possuem vértices em comum, não há a possibilidade de acontecer condição de corrida durante o acesso às variáveis globais $z$ e  $r$ do algoritmo \ref{alg:ebeCorCG1} e $q$ e $d$ dos algoritmos \ref{alg:ebeCorCG2} e \ref{alg:ebeCorCG3} respectivamente. A estrutura de dados $cores$ contém os dados do elemento, tais como os identificadores dos nós e do próprio elemento na malha.
+Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que elementos da mesma cor seja executados simultaneamente e elementos de cores distintas sequencialmente. Como elementos de uma determinada cor não possuem vértices em comum, não há a possibilidade de acontecer condição de corrida durante o acesso às variáveis globais $z$ e  $r$ do algoritmo \ref{alg:ebeCorCG1} e $q$ e $d$ dos algoritmos \ref{alg:ebeCorCG2} e \ref{alg:ebeCorCG3} respectivamente. A estrutura de dados $cores$ contém os dados da localização do elemento na malha.
 
 \begin{algorithm}	
 	\caption{\label{alg:ebeCorCG1}Aplicação da coloração no algoritmo \ref{alg:ebeCG1}} 
@@ -911,6 +911,62 @@ Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que e
 		\State{$r_{0}$ = $b$}
 	\end{algorithmic}
 \end{algorithm}
+
+\subsection{Paralelização do algoritmo}
+A fim de manter a conformidade com o ambiente de desenvolvimento optou-se por utilizar a \textit{parallel Computing toolbox} do \matlab. Esta ferramenta possibilita a implementação para plataformas \textit{multicore}, GPUs, \textit{clusters}, \textit{grids} e \textit{cloud}. De acordo com a documentação do \matlab \cite{matMulticore}, funções de álgebra linear como $fft$, $mldivide$, $eig$, $svd$, e $sort$
+são \textit{multithread} desde a versão R2018a. No entanto, é possível melhorar a performance de funções customizadas por meio da \textit{parallel toolbox}.
+
+A fim de garantir a robustez do código paralelizado, o \matlab disponibiliza a programação em múltiplos \textit{workers} ao invés de \textit{threads}. Cada \textit{worker} é um processo que trabalha em função do processo principal (\textit{client}) que o originou. Desta forma, as tarefas são divididas entre os \textit{workers} e coordenadas pelo \textit{client}, num modelo do tipo mestre-escravo. A fim de evitar condições de corrida e o \textit{overhead} de comunicação entre os processos, a ferramenta trabalha por meio da distribuição ao invés do compartilhamento de memória. Assim sendo, os dados são copiados para cada \textit{worker} e ao final do processamento, agregados novamente no \textit{client}. A tabela \ref{tab:partool} contém a descrição das funções utilizadas da \textit{parallel toolbox}.
+
+
+\begin{table}[!ht]   
+	\centering
+	\begin{tabular}{|l|p{10cm}|}  
+		\hline
+		\textbf{Função} 
+		& \textbf{Descrição} 
+		\\  
+		\hline
+		\textbf{gcp} 
+		& \textit{Get current parallel pool} retorna as informações sobre os \textit{workers} ativos.
+		\\
+		\hline
+		\textbf{parpool}  
+		& Cria uma nova \textit{parallel pool}, ou seja, um conjunto de \textit{workers} e os demais processos necessários para o funcionamento da \textit{toolbox}.
+		\\
+		\hline		
+		\textbf{parfor} 
+		& Executa as iterações de um \textit{loop} em \textit{workers}. Para que isso seja possível as iterações devem ser independentes entre si e as estruturas de dados (coleções) utilizadas devem ter a característica de serem ``fatiadas''.  Por exemplo, uma matriz bidimensional pode ser fatiada de $2$ formas, pelas linhas ou pelas colunas.
+		\\
+		\hline		 
+		\textbf{spmd} 
+		& A função \textit{single program, multiple data} executando o mesmo código em diferentes \textit{workers}. Diferente do \textit{parfor}, os dados não precisam necessariamente estar particionados, visto que o \textit{spmd} permite a comunicação entre os \textit{workers}.
+		\\
+		\hline		
+		\textbf{codistributed} 
+		& Propriedade que informa que uma coleção de dados deve ser distribuída entre os \textit{workers} e não copiada integralmente.
+		\\
+		\hline		 
+		\textbf{getLocalPart} 
+		& Obtém os dados de uma determinada partição de uma coleção distribuída.
+		\\
+		\hline	
+		\textbf{codistributor}
+		& Função que realiza a distribuição de uma coleção. Diferente da distribuição limitada que ocorre no \textit{parfor}, essa função possibilita que a distribuição seja feita de diferentes formas em uma coleção. 
+		\\
+		\hline
+		\textbf{gather}
+		& Função que realiza a agregação de uma coleção distribuída.
+		\\
+		\hline
+		\textbf{drange}  
+		& Executa um \textit{loop} entre as partições de uma coleção. Este bloco de código faz com que os \textit{workers} trabalhem simultaneamente em cada distribuição da coleção, mas impede a comunicação entre eles.
+		\\
+		\hline	
+	\end{tabular}
+	\caption{Descrição das funções utilizadas no algoritmo do FEM}
+	\label{tab:partool}
+\end{table}
 
 \section{Resultados preliminares}
 A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, o refinamento da malha do objeto gerada pela função generateMesh é feito de forma diferente, por meio da alteração do parâmetro \textit{Hmax} que estabelece o tamanho máximo de cada aresta. A vantagem dessa abordagem é o maior controle das propriedades da malha, como por exemplo a quantidade de elementos, no entanto, a desvantagem é que a cada alteração neste parâmetro uma nova malha é gerada, em diferentes pontos. Dessa forma, não se pode precisar com exatidão do valor em cada um dos pontos de referência apresentados nas figuras \ref{fig:solPde}{(c)} e \ref{fig:solPde}{(d)}, no entanto, a corretude da aproximação pode ser verificada na média pelos nós que estão entorno de cada ponto de referência ou ainda considerando o valor do nó mais próximo. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Foram adotadas regiões quadradas de lado igual a $3mm$, $5mm$ e $10mm$, de acordo com a localização do ponto de referencia.
