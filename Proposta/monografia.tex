@@ -66,6 +66,8 @@
 %Espaçamento em formulas e tabelas
 \renewcommand{\arraystretch}{1.3}
 \newcommand{\matlab}{MATLAB\textsuperscript{\textregistered}}
+
+
 % --- 
 % CONFIGURAÇÕES DE PACOTES
 % --- 
@@ -90,7 +92,7 @@
 % ---
 % Informações de dados para CAPA e FOLHA DE ROSTO
 % ---
-\titulo{Avaliação do método do gradiente conjugado precondicionado para a solução paralela de um modelo de elementos finitos}
+\titulo{Avaliação quantitativa do método do gradiente conjugado precondicionado para a solução paralela e concorrente de um modelo de elementos finitos}
 \autor{Thiago de Sousa Goveia}
 \local{Timóteo}
 \data{2017}
@@ -343,7 +345,7 @@ Resumo...
 	
 
 	
-\section{Problema da Pesquisa}
+\section{Problema de Pesquisa}
 	Neste trabalho é feita uma análise quantitativa do desempenho do algoritmo do EbE-FEM nas linguagens concorrentes C++, Erlang e Scala e nas linguagens de computação paralela, CUDA e Harlan.
 	O problema \textit{benchmark} a ser resolvido refere-se à equação de Laplace originada do cálculo da distribuição de potencial e do campo elétrico de um capacitor de placas paralelas \cite[Exemplo 10.3]{boylestad2011}.
 	A escolha deste problema se deve à simplicidade de sua modelagem e ao seu comportamento já explorado em livros de eletromagnetismo e circuitos elétricos.
@@ -351,7 +353,7 @@ Resumo...
 	
 \section{Justificativa}
 
-A justificativa deste trabalho se baseia na contínua transformação dos paradigmas de programação e arquiteturas de hardware. Como coloca \citeonline{Guo2014}, com aumento de núcleos de processamento, ocorre a redução da razão memória por núcleo, o que impõe uma forte demanda para que os algoritmos utilizem eficientemente todos os níveis de paralelismo disponíveis enquanto minimizam a movimentação de dados. Tal evolução não se limita ao cenários dos \textit{clusters} e \textit{grids} mas alcança inclusive os dispositivos móveis, que atualmente já possuem até oito núcleos. Pensando em um futuro próximo, com os avanços da computação ubíqua que introduz temas como internet das coisas, dispositivos "usáveis", realidade aumentada e realidade virtual, a necessidade de se aproveitar ao máximo todo o poder de processamento disponível se torna ainda mais evidente, uma vez que nessas tecnologias há alta demanda de processamento e/ou pouco espaço físico para comportar um processador adequado. A justificativa para a escolha das linguagens C++11, Scala e Erlang se dá devido à ausência de trabalhos acadêmicos relacionando tais tecnologias e seu desempenho. C/C++ é uma linguagem abrangente, robusta e atual, presente por trás de grande parte das aplicações \textit{desktop} e \textit{mobile}. Scala e Erlang (e/ou Elixir \textit{bytecode}) são linguagens naturalmente concorrentes e que possuem crescente \textit{market share} \nocite{erlang}\nocite{scala}.
+A justificativa deste trabalho se baseia na contínua transformação dos paradigmas de programação e arquiteturas de hardware. Como coloca \citeonline{Guo2014}, com aumento de núcleos de processamento, ocorre a redução da razão memória por núcleo, o que impõe uma forte demanda para que os algoritmos utilizem eficientemente todos os níveis de paralelismo disponíveis enquanto minimizam a movimentação de dados. Tal evolução não se limita ao cenários dos \textit{clusters} e \textit{grids} mas alcança inclusive os dispositivos móveis, que atualmente já possuem até oito núcleos. Pensando em um futuro próximo, com os avanços da computação ubíqua que introduz temas como internet das coisas, dispositivos "usáveis", realidade aumentada e realidade virtual, a necessidade de se aproveitar ao máximo todo o poder de processamento disponível se torna ainda mais evidente, uma vez que nessas tecnologias há alta demanda de processamento e/ou pouco espaço físico para comportar um processador adequado. A justificativa para a escolha das linguagens C++, Scala e Erlang se dá devido à ausência de trabalhos acadêmicos relacionando tais tecnologias e seu desempenho. C/C++ é uma linguagem abrangente, robusta e atual, presente por trás de grande parte das aplicações \textit{desktop} e \textit{mobile}. Scala e Erlang (e/ou Elixir) são linguagens naturalmente concorrentes e que possuem crescente \textit{market share} \nocite{erlang}\nocite{scala}.
 
 
 \section{Objetivos}
@@ -375,12 +377,13 @@ A justificativa deste trabalho se baseia na contínua transformação dos paradi
 		\item Comparar conforme as métricas o desempenho das linguagens nativamente concorrentes e paralelas na resolução do problema \textit{benchmark} proposto neste trabalho.
 	\end{itemize}
 
-\subchapter{Resultados Esperados}
+\section{Resultados Esperados}
 
 Espera-se com este trabalho iniciar no CEFET-MG campus Timóteo uma nova linha de pesquisa a ser continuada nos trabalhos futuros, voltada para a análise numérica de problemas de valor de contorno da física aplicada. De forma similar, espera-se o incentivo e a adoção por parte da universidade de paradigmas e linguagens emergentes, a fim de diversificar o currículo dos graduandos.
 
 
-\chapter{Estado da arte}
+\chapter{Revisão bibliográfica}
+\section{Estado da arte}
 Como coloca \citeonline{Kiss2012}, o processamento paralelo de um problema modelado pelo FEM pode ser feito a partir da decomposição do domínio do problema. Esta decomposição pode ser feita por meio do particionamento da malha que representa o domínio do problema ou por meio da decomposição apropriada da matriz de coeficientes.
 Os trabalhos de \citeonline{Boehmer2011} e \citeonline{Ahamed2016} apresentam a solução paralela do FEM por meio do particionamento da malha. No primeiro caso o processamento é executado comparativamente nas arquiteturas de memória compartilhada e distribuída com o uso da API OpenMP e da biblioteca MPI respectivamente.
 No segundo caso, a comparação é feita entre as linguagens CUDA e OpenCL que são executadas em uma arquitetura \textit{manycore}. 
@@ -400,7 +403,7 @@ O trabalho de \citeonline{Wu2015} também apresenta o método BiCG elemento a el
 Outros trabalhos importantes para esta monografia são os de \citeonline{Xu2005}, \citeonline{Yao2015} e \citeonline{Chou2016}. O primeiro apresenta a implementação do EbE-CG e a técnica de atribuição das condições de contorno que também será empregada no presente trabalho. O segundo apresenta a comparação da performance da implementação do BiCG estabilizado (BiCGStab) em CPU e GPU, utilizando-se diferentes formas de armazenamento de matriz esparsa e diferentes ferramentas de resolução de sistema linear em GPU, a saber: CUSPARSE, CUSP e CULA Sparse. O último trabalho apresenta a comparação entre diferentes tecnologias de processamento paralelo (Cuda C, Cuda Fortran, MPI e OpenMP) na resolução de dois problemas \textit{benchmark}
 
 
-\chapter{Fundamentação teórica}
+\section{Fundamentação teórica}
 % ---
 Neste capítulo é apresentado o referencial teórico para a compreensão dos métodos e conceitos utilizados ao longo deste trabalho. 
 Na \hyperref[sec:PVC]{primeira seção} é apresentada a definição de Problemas de Valor de Contorno (PVC) bem como o problema a ser solucionado neste trabalho. 
@@ -410,13 +413,13 @@ As seções \ref{sec:preProc}, \ref{sec:proc} e \ref{sec:posProc} abordam respec
 Nas seção \ref{sec:eletromag} são apresentadas as equações de Maxwell para o Eletromagnetismo e na seção \ref{sec:tecItera} são mostradas algumas técnicas iterativas para a resolução de sistemas lineares, tais como o Método do Gradiente Conjugado e o uso de Precondicionadores. Estas técnicas são as estratégias utilizadas para a realização da abordagem Elemento a Elemento (EbE) do FEM.
 Por fim, a \hyperref[sec:GPGPU]{última seção} deste capítulo apresenta os principais fundamentos da programação de Uso Geral em Unidades de Processamento Gráfico (GPGPU).
 
-\section{Problema de Valor de Contorno}
+\subsection{Problema de Valor de Contorno}
 \label{sec:PVC}
 
 
-Um problema de valor inicial \textbf{PVI},pode ser definido como uma equação ou sistema de equações diferenciais no qual são dadas as condições iniciais do fenômeno. Tais condições são impostas sobre a variável dependente e suas derivadas em um único instante de tempo (inicial) $t_0$. Um problema de valor de contorno \textbf{PVC} por sua vez, apresenta tais condições impostas em pontos distintos, como por exemplo em $x_i$ e $x_f$. Geralmente os PVI são dados em função do tempo enquanto os PVC são dados em função do espaço \cite{boyceDiprima}.
+Um problema de valor inicial PVI,pode ser definido como uma equação ou sistema de equações diferenciais no qual são dadas as condições iniciais do fenômeno. Tais condições são impostas sobre a variável dependente e suas derivadas em um único instante de tempo (inicial) $t_0$. Um problema de valor de contorno PVC por sua vez, apresenta tais condições impostas em pontos distintos, como por exemplo em $x_i$ e $x_f$. Geralmente os PVI são dados em função do tempo enquanto os PVC são dados em função do espaço \cite{boyceDiprima}.
 
-Como pode ser visto na tabela \ref{tab:cond}. as condições estabelecidas sobre a variável dependente, são chamadas de \textbf{condições de Dirichlet} ou \textbf{essenciais}, enquanto as que são estabelecidas sobre as derivadas da variável dependente são  conhecidas como \textbf{condições de Neumann} ou  \textbf{naturais}. Além destas duas, existem as restrições específicas do fenômeno modelado, como por exemplo, condições de radiação ou de impedância para problemas do eletromagnetismo \cite{jin}. 
+Como pode ser visto na tabela \ref{tab:cond}. as condições estabelecidas sobre a variável dependente, são chamadas de \textit{condições de Dirichlet} ou \textit{essenciais}, enquanto as que são estabelecidas sobre as derivadas da variável dependente são  conhecidas como \textit{condições de Neumann} ou  \textit{naturais}. Além destas duas, existem as restrições específicas do fenômeno modelado, como por exemplo, condições de radiação ou de impedância para problemas do eletromagnetismo \cite{jin}. 
 
 
 \begin{table}   
@@ -449,7 +452,7 @@ No entanto, a maioria dos problemas da engenharia e da ciência não são linear
 
 
 
-\section{Métodos numéricos para PVCs}
+\subsection{Métodos numéricos para PVCs}
 \label{sec:FEM}
 
 O método dos elementos finitos (FEM) é uma alternativa numérica para a solução de PVCs.Neste método, o domínio do problema é visto como uma coleção de subdomínios, chamados de elementos finitos, sobre os quais, a equação que modela o problema é aproximada por um método variacional ou de resíduos ponderados \citeonline{reddy}. Essas diferentes vertentes do método surgiram graças aos esforços independentes de matemáticos, cientistas e engenheiros \cite{zien}. 
@@ -466,20 +469,20 @@ Diferentemente do FDM, como coloca \citeonline{huebner}, o FEM divide o domínio
 	\label{fig:mdfFem}
 \end{figure}
 
-\section{Método dos Elementos Finitos}
+\subsection{Método dos Elementos Finitos}
 
 O FEM surgiu originalmente como uma técnica de análise de deslocamentos e elasticidade de estruturas mecânicas, mas em seguida foi estendido para solucionar problemas de outros campos da física e da engenharia \cite{jin, desai, zien}.
 
-As primeiras formulações do FEM são conhecidas como \textbf{abordagem direta} ou \textbf{formulação física}, que embora forneça a interpretação intuitiva do método, é util apenas para a resolução de problemas relativamente simples \cite{huebner, desai, zien}. O uso do princípio do trabalho virtual, para a determinação de forças na abordagem direta, levou à generalização do FEM, por meio da estratégia de minimização do funcional de energia. Esta técnica mais genérica  ficou conhecida como \textbf{formulação variacional} \cite{desai, zien, jin} e tem como principal representante o método de Rayleigh-Ritz. Uma terceira abordagem, conhecida como \textbf{Método dos Resíduos Ponderados} ou \textbf{formulação generalizada} \cite{zien, huebner} é tradicionalmente utilizada e é ainda mais genérica que o princípio variacional, pois resolve diretamente as equações diferenciais do modelo, sem necessitar da existência de um funcional de energia \cite{desai}, ou ainda, sem exigir que o sistema seja positivo-definido. Neste trabalho será adotado o método dos resíduos ponderados, mais especificamente, o método de Galerkin.
+As primeiras formulações do FEM são conhecidas como \textit{abordagem direta} ou \textit{formulação física}, que embora forneça a interpretação intuitiva do método, é util apenas para a resolução de problemas relativamente simples \cite{huebner, desai, zien}. O uso do princípio do trabalho virtual, para a determinação de forças na abordagem direta, levou à generalização do FEM, por meio da estratégia de minimização do funcional de energia. Esta técnica mais genérica  ficou conhecida como \textit{formulação variacional} \cite{desai, zien, jin} e tem como principal representante o método de Rayleigh-Ritz. Uma terceira abordagem, conhecida como \textit{Método dos Resíduos Ponderados} ou \textit{formulação generalizada} \cite{zien, huebner} é tradicionalmente utilizada e é ainda mais genérica que o princípio variacional, pois resolve diretamente as equações diferenciais do modelo, sem necessitar da existência de um funcional de energia \cite{desai}, ou ainda, sem exigir que o sistema seja positivo-definido. Neste trabalho será adotado o método dos resíduos ponderados, mais especificamente, o método de Galerkin.
 
 
-\section{Método dos Resíduos Ponderados}
+\subsection{Método dos Resíduos Ponderados}
 \label{sec:proc}
 
 De acordo com \citeonline{jin}, a aplicação do FEM pode ser feita a partir de $4$ passos básicos, os quais serão detalhados nas subseções a seguir.
 
 
-\subsection{Discretização do Domínio} 
+\subsubsection*{Discretização do Domínio} 
 A discretização do domínio consiste na transformação do contínuo $\Omega$ em uma malha de elementos finitos (discretos). Cada elemento $\Omega_e$ dessa malha representa um subdomínio de $\Omega$.  
 Nesta etapa são definidas a forma, a quantidade e o tamanho dos elementos, de forma que a representação em malha seja a mais próxima possível do objeto em análise \cite{desai}.
 
@@ -495,7 +498,7 @@ Um fator que deve ser levado em consideração é o balanceamento entre o refina
 	\label{fig:numeracao}
 \end{figure}
 
-\subsection{Seleção das funções de interpolação}
+\subsubsection*{Seleção das funções de interpolação}
 \label{sec:interp}
 O passo seguinte é a escolha das funções de interpolação (ou função de base ou de forma) \cite{huebner} que fornece uma aproximação da equação original dentro de cada subdomínio \cite{jin}. 
 A função interpoladora escolhida geralmente é um polinômio, e isso ocorre por dois motivos a priori \cite{desai}:
@@ -534,7 +537,7 @@ N_i^e(x^e_j, y^e_j) = \delta_{ij} = \begin{cases}
 
 As funções de interpolação mais comuns pertencem às famílias de funções Lagrange e Serendipity \cite{zien, volakis}.
 
-\subsection{Formulação do sistema de equações}
+\subsubsection*{Formulação do sistema de equações}
 Na abordagem variacional destaca-se o método de Ritz, ou Rayleigh-Ritz, o qual tem por objetivo, minimizar o funcional variacional, ou funcional de energia, do problema aproximado \cite{volakis}. Embora tal abordagem tenha sido historicamente utilizada e possua fundamentação física e matemática, sua adoção, em muitos casos, é mais complicada em relação ao Método dos Resíduos Ponderados, pois demanda a formulação variacional do problema. Desta forma, se um problema é dado por um modelo diferencial, é necessário se obter a partir deste modelo a forma variacional equivalente, para só então se aplicar o método para a obtenção do sistema de equações. No eletromagnetismo, a formulação variacional das equações de Maxwell não é bem estabelecida \cite{jin}.
 
 Para problemas que apresentam explicitamente condições de Dirichlet no contorno e cujo operador $\mathcal{L}$ é linear e auto-adjunto, é possível se obter imediatamente o funcional de energia correspondente \cite{zien}, no entanto, como mostra \cite[p. 29]{volakis}, para este tipo de operador a mesma integral da formulação variacional é obtida pelo método de Galerkin.
@@ -595,8 +598,11 @@ Método da colocação & $ \delta(x - x_i)  $
 \end{tabular}
 \end{equation}
 
-\subsection{Método dos elementos finitos em 2 dimensões}
+
+\subsubsection*{Método dos elementos finitos em 2 dimensões}
 \label{sec:fem2d}
+
+\subsection{Método dos gradientes conjugados}
 
 \chapter{Desenvolvimento}
 
