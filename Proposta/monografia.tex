@@ -601,10 +601,36 @@ Uma vez que as matrizes elementares foram obtidas é realizado o mapeamento dos 
 
 Neste trabalho são abordadas apenas as condições de contorno de Dirichlet. Essas condições, também conhecidas como essenciais, correspondem aos valores pre-estabelecidos da variável dependente. Dessa forma a definição do contorno consiste na substituição das incógnitas dos nós de contorno por seus respectivos valores. Assim, se um sistema de ordem $1000$ possui $200$ valores pré-fixados ele pode ser reduzido a ordem $800$.
 
+\subsection{Método do Gradiente Conjugado}
+O método do gradiente conjugado (CG) foi proposto por Hestenes e Stiefel em 1952 como um método direto para a solução de sistemas $n$ por $n$ positivos definidos (minimização do funcional de energia) \cite{burdenFaires}.
+Embora sua concepção seja de um método exato que converge após $n$ iterações, sua aplicação tem sido feita como na forma de um método iterativo para se aproximar a solução de sistemas esparsos  \cite{Barrett1995}.
+O método trabalha na busca da direção de mais decrescimento do funcional, ou seja, na direção contrária do vetor gradiente para problemas de minimização. Inicialmente é atribuído um ``chute'' para a solução, e à este chute é vinculado um certo resíduo, proporcional à distância entre o valor do chute e o valor da solução (mínimo do funcional). A cada iteração é calculada a correção da direção, a qual é tomada de tal forma que seja ortogonal às direções anteriores, impedindo que o método repita uma direção já percorrida. As direções ortogonais são obtidas por meio de sucessivas multiplicações da matriz do sistema pelo vetor direção. Dessa forma a aproximação da solução em cada iteração é encontrada em um subespaço de Krylov, como mostra a equação \ref{eq:krylov}. O pseudocódigo \ref{alg:kry} descreve as iterações do CG.
+
+\begin{equation}
+\label{eq:krylov}
+K^m = span(d, Ad, A^2d, A^3d, ..., A^{m-1}d)
+\end{equation}
+
+\begin{algorithm}	
+	\caption{\label{alg:kry}Algoritmo do Gradiente Conjugado} 
+	\begin{algorithmic}[1]
+		\State{$d_0 = r_0 = b - Ax_0$}		
+		\For{j = 1,2...}
+		\State{$\alpha = \frac{{r^i}^Tr^i}{{d^i}^TAd^i}$}
+		\State{$x^{i+1} = x^i + \alpha d^i$}	
+		\State{$r^{i+1} = r^i - \alpha d^i$}		
+		\State{$\beta = \frac{{r^{i+1}}^Tr^{i+1}}{{r^i}^Tr^i}$}
+		\State{$d^{i+1} = d^i - \beta d^i$}
+		\If{$\frac{\parallel r^{i+1}\parallel}{\parallel b\parallel}$}
+		\State{break}	
+		\EndIf
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
 
 \subsubsection*{Método dos elementos finitos em 2 dimensões}
 \label{sec:fem2d}
-Neste tópico serão desenvolvidos os passos do FEM relacionados no tópico anterior. O exemplo apresentado foi adaptado do exemplo $6.1$ de \citeonline{sadiku}. Deseja-se saber o valor do potencial elétrico nos pontos $a$ e $b$ da placa submetida a uma diferença de potencial de $10V$, como mostra a figura \ref{fig:exemplo}[a].
+Neste tópico serão desenvolvidos os passos do FEM relacionados no tópico anterior. O exemplo apresentado foi adaptado do exemplo $6.1$ de \citeonline{sadiku}. Deseja-se saber o valor do potencial elétrico nos pontos $a$ e $b$ da placa submetida a uma diferença de potencial de $10V$, como mostra a figura \ref{fig:exemplo}{a}.
 
 \begin{figure}%
 	\centering
