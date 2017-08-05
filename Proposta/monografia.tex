@@ -67,6 +67,10 @@
 \renewcommand{\arraystretch}{1.3}
 \newcommand{\matlab}{MATLAB\textsuperscript{\textregistered}}
 
+% Please add the following required packages to your document preamble:
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
 
 % --- 
 % CONFIGURAÇÕES DE PACOTES
@@ -597,11 +601,12 @@ Método da colocação & $ \delta(x - x_i)  $
 \end{tabular}
 \end{equation}
 
-Uma vez que as matrizes elementares foram obtidas é realizado o mapeamento dos identificadores locais para os identificadores globais. Este processo é conhecido como montagem da matriz global e é detalhado no apêndice \ref{ap:sistDisc}. O sistema global é esparso e da ordem do número de nós da malha. As contribuições elementares (ou os coeficientes das matrizes de elementos) são agregados na matriz e as condições de contorno são aplicadas.
+Uma vez que as matrizes elementares foram obtidas é realizado o mapeamento dos identificadores locais para os identificadores globais. Este processo é conhecido como montagem da matriz global e é detalhado no apêndice \ref{ap:SED}. O sistema global é esparso e da ordem do número de nós da malha. As contribuições elementares (ou os coeficientes das matrizes de elementos) são agregados na matriz e as condições de contorno são aplicadas.
 
-Neste trabalho são abordadas apenas as condições de contorno de Dirichlet. Essas condições, também conhecidas como essenciais, correspondem aos valores pre-estabelecidos da variável dependente. Dessa forma a definição do contorno consiste na substituição das incógnitas dos nós de contorno por seus respectivos valores. Assim, se um sistema de ordem $1000$ possui $200$ valores pré-fixados ele pode ser reduzido a ordem $800$.
+Neste trabalho são abordadas apenas as condições de contorno de Dirichlet. Essas condições, também conhecidas como essenciais, correspondem aos valores pre-estabelecidos da variável dependente. Dessa forma a definição do contorno consiste na substituição das incógnitas dos nós de contorno por seus respectivos valores. Assim, se um sistema de ordem $1000$ possui $200$ valores pré-fixados ele pode ser reduzido a ordem $800$. Um exemplo com os passos descritos nessa subseção é apresentado no apêndice \ref{sec:fem2d}.
 
 \subsection{Método do Gradiente Conjugado}
+\label{sec:CG}
 O método do gradiente conjugado (CG) foi proposto por Hestenes e Stiefel em 1952 como um método direto para a solução de sistemas $n$ por $n$ positivos definidos (minimização do funcional de energia) \cite{burdenFaires}.
 Embora sua concepção seja de um método exato que converge após $n$ iterações, sua aplicação tem sido feita como na forma de um método iterativo para se aproximar a solução de sistemas esparsos  \cite{Barrett1995}.
 O método trabalha na busca da direção de mais decrescimento do funcional, ou seja, na direção contrária do vetor gradiente para problemas de minimização. Inicialmente é atribuído um ``chute'' para a solução, e à este chute é vinculado um certo resíduo, proporcional à distância entre o valor do chute e o valor da solução (mínimo do funcional). A cada iteração é calculada a correção da direção, a qual é tomada de tal forma que seja ortogonal às direções anteriores, impedindo que o método repita uma direção já percorrida. As direções ortogonais são obtidas por meio de sucessivas multiplicações da matriz do sistema pelo vetor direção. Dessa forma a aproximação da solução em cada iteração é encontrada em um subespaço de Krylov, como mostra a equação \ref{eq:krylov}. O pseudocódigo \ref{alg:kry} descreve as iterações do CG.
@@ -629,8 +634,6 @@ K^m = span(d, Ad, A^2d, A^3d, ..., A^{m-1}d)
 \end{algorithm}
 
 
-\subsection{Método dos gradientes conjugados}
-\label{sec:CG}
 
 \chapter{Desenvolvimento}
 
@@ -1026,10 +1029,17 @@ A nova estrutura de dados gerada durante a coloração já retorna o vetor $b$ (
 Enquanto a paralelização por \textit{parfor} é feita elemento a elemento, a função \textit{spmd} distribui o processamento em $q$ partes, sendo $q$ a quantidade de \textit{workers}. Cada \textit{worker} executa sequencialmente a parcela do problema que lhe é atribuída. Conforme a recomendação da documentação, para se obter melhor desempenho, a quantidade de \textit{workers} deve ser a mesma de núcleos físicos do processador. Ao se utilizar o bloco $for-drange$ na linha $13$ ao invés do $for$ convencional, o comportamento do $spdm$ passa a ser equivalente ao do $parfor$.
 
 
-\section{Resultados preliminares}
-A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, o refinamento da malha do objeto gerada pela função generateMesh é feito de forma diferente, por meio da alteração do parâmetro \textit{Hmax} que estabelece o tamanho máximo de cada aresta. A vantagem dessa abordagem é o maior controle das propriedades da malha, como por exemplo a quantidade de elementos, no entanto, a desvantagem é que a cada alteração neste parâmetro uma nova malha é gerada, em diferentes pontos. Dessa forma, não se pode precisar com exatidão do valor em cada um dos pontos de referência apresentados nas figuras \ref{fig:solPde}{(c)} e \ref{fig:solPde}{(d)}, no entanto, a corretude da aproximação pode ser verificada na média pelos nós que estão entorno de cada ponto de referência ou ainda considerando o valor do nó mais próximo. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Foram adotadas regiões quadradas de lado igual a $3mm$, $5mm$ e $10mm$, de acordo com a localização do ponto de referencia.
+\section{Resultados}
+Os resultados deste trabalho estão divididos nas subseções \textit{resultados preliminares} e \textit{resultados aplicados}. Na primeira subseção são apresentados os resultados da modelagem com o \matlab e na subseção seguinte os resultados da aplicação do algoritmo desenvolvido nas linguagens C++, Scala, Erlang, CUDA e Harlan.
 
-\iffalse
+\subsection{Resultados preliminares}
+O objetivo desta primeira etapa de atividades é validar o processo de paralelização do EbE-FEM na tentativa de antecipar as possíveis dificuldades que possam surgir na implementação do algoritmo nas linguages concorrentes e paralelas e nas arquiteturas multi e \textit{manycore}. 
+
+
+\subsubsection*{\textit{Overview} da triangulação}
+No início do desenvolvimento foram selecionados pontos de referência a fim de se estimar a precisão das aproximações, com base nos resultados da \text{pdetool} (figura \ref{fig:solPde}).
+A \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, a opção de refinamento programático disponibilizada pela \textit{toolbox} é dada pelo parâmetro \textit{Hmax} da função \textit{generateMesh} (algoritmo \ref{alg:FEM}). Enquanto o refinamento da \textit{pdetool} mantém os pontos da malha original, a alteração do \textit{Hmax} gera uma nova malha, fazendo com que os pontos de referência se percam. Embora essa abordagem possibilite o maior controle da quantidade de elementos, ela impossibilita a verificação da precisão do valor de um ponto após o refinamento. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Como não se pôde observar a precisão foi observado o valor médio próximo aos pontos de referência. 
+
 \begin{figure}%
 	\centering	
 	\subfloat[Refinamento com $Hmax = 0.6$]{{\includegraphics[scale=0.5]{figuras/viz0_6.pdf} }}%
@@ -1038,12 +1048,78 @@ A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que co
 	\caption{Vizinhança dos pontos de referência}%
 	\label{fig:vizinha}%
 \end{figure}
-\fi
+
+A tabela \ref{tab:hmax} apresenta a quantidade de elementos e nós gerados para cada valor de $Hmax$.
+\begin{table} 
+	\centering
+	\begin{tabular}{|l|l|l|}  
+		\hline
+		\textbf{Hmax} & \textbf{Nós} & \textbf{Elementos} \\ 
+		\hline
+		$0.6$ & $1700$ & $3190$ \\
+		\hline
+		$0.5$ & $2196$ & $4162$ \\
+		\hline
+		$0.4$ & $3154$ & $6046$ \\
+		\hline
+		$0.3$ & $5287$ & $10244$ \\
+		\hline
+		$0.2$ & $11439$ & $22416$ \\       
+		\hline
+		$0.1$ & $44692$ & $88522$ \\       
+		\hline
+		$0.05$ & $176971$ & $352148$ \\       
+		\hline				
+	\end{tabular}
+	\caption{Mapeamento dos identificadores locais do circuito da figura \ref{fig:malhaGenerica}}
+	\label{tab:hmax}
+\end{table}
+
+\subsubsection*{\textit{Overview} das implementações}
+Conforme apresentado no capítulo de materiais e métodos, foram desenvolvidas duas versões do algoritmo  do EbE-FEM, sendo a primeira adequada para sistemas de memória compartilhada e \textit{multithread} (algoritmos \ref{alg:ebeCorCG1} a \ref{alg:ebeCorCG3}) e a segunda para sistemas de memória distribuída (\ref{alg:ebeParCG1} e \ref{alg:ebeSpmdCG1}).
+A primeira versão do algoritmo proposta por \citeonline{Kiss2012} apresenta coloração e é paralelizável, no entanto, devido às restrições dos blocos \textit{parfor} e \textit{spmd} da \textit{parallel computing toolbox} do \matlab foi possível testá-la apenas em sua sequencialmente.
+A segunda implementação utiliza uma estrutura de dados distribuída e desacoplada para atender aos critérios de ``fatiamento'' e independência dos blocos \textit{parfor} e \textit{spmd}.
 
 
+\subsubsection*{Resultados numéricos}
 
 
-
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[]
+	\centering
+	\caption{Tempo de Execução, consumo de memória e uso da CPU dos solvers sequenciais}
+	\label{my-label}
+	\begin{tabular}{|l|l|l|l|l|}
+		\hline
+		\textbf{Solver}                         & \textbf{Hmax} & \textbf{Tempo (s)} & \textbf{Memo (MiB)} & \textbf{\%CPU} \\ \hline
+		\multirow{6}{*}{\textbf{\matlab}}        & 0.6           & 0.390717           & 22.1                & 8              \\ \cline{2-5} 
+		& 0.5           & 0.524704           & 37                  & 24             \\ \cline{2-5} 
+		& 0.4           & 0.911115           & 81.8                & 28             \\ \cline{2-5} 
+		& 0.3           & 2.572255           & 215.2               & 29             \\ \cline{2-5} 
+		& 0.2           & 21.337269          & 995                 & 50             \\ \cline{2-5} 
+		& 0.1           & x                  & x                   & x              \\ \hline
+		\multirow{3}{*}{\textbf{\matlab Sparse}} & 0.3           & 2.447401           & 0.05                & 25             \\ \cline{2-5} 
+		& 0.2           & 6.158577           & 0.08                & 26             \\ \cline{2-5} 
+		& 0.1           & 76.558448          & 17.2                & 29             \\ \hline
+		\multirow{6}{*}{\textbf{CG}}            & 0.6           & 0.541897           & 32.9                & 19             \\ \cline{2-5} 
+		& 0.5           & 0.789027           & 36.2                & 16             \\ \cline{2-5} 
+		& 0.4           & 1.56392            & 71.3                & 27             \\ \cline{2-5} 
+		& 0.3           & 4.562658           & 210.7               & 51             \\ \cline{2-5} 
+		& 0.2           & 27.876141          & 1006.3              & 55             \\ \cline{2-5} 
+		& 0.1           & x                  & x                   & x              \\ \hline
+		\multirow{4}{*}{\textbf{CG Sparse}}     & 0,3           & 5.114425           & 0.1                 & 29             \\ \cline{2-5} 
+		& 0.2           & 6.30303            & 3.2                 & 31             \\ \cline{2-5} 
+		& 0.1           & 79.396158          & 25.7                & 33             \\ \cline{2-5} 
+		& 0.05          & 1379.017507        & 172.2               & 35             \\ \hline
+		\multirow{6}{*}{\textbf{EBE Seq}}       & 0.6           & 6.082238           & 0.05                & 25             \\ \cline{2-5} 
+		& 0.5           & 8.84496            & 0.1                 & 26             \\ \cline{2-5} 
+		& 0.4           & 16.518907          & 0.3                 & 25             \\ \cline{2-5} 
+		& 0.3           & 35.125817          & 1.7                 & 27             \\ \cline{2-5} 
+		& 0.2           & 111.13326          & 11.8                & 29             \\ \cline{2-5} 
+		& 0.1           & 996.990077         & 52.9                & 29             \\ \hline
+	\end{tabular}
+\end{table}
 
 
 
