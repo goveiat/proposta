@@ -628,170 +628,6 @@ K^m = span(d, Ad, A^2d, A^3d, ..., A^{m-1}d)
 	\end{algorithmic}
 \end{algorithm}
 
-\subsubsection*{Método dos elementos finitos em 2 dimensões}
-\label{sec:fem2d}
-Neste tópico serão desenvolvidos os passos do FEM relacionados no tópico anterior. O exemplo apresentado foi adaptado do exemplo $6.1$ de \citeonline{sadiku}. Deseja-se saber o valor do potencial elétrico nos pontos $a$ e $b$ da placa submetida a uma diferença de potencial de $10V$, como mostra a figura \ref{fig:exemplo}{a}.
-
-\begin{figure}%
-	\centering
-	\subfloat[Geometria do problema]{{\includegraphics[scale=0.7]{figuras/exemploG.pdf} }}%
-	\qquad
-	\subfloat[Triangulação do problema]{{\includegraphics[scale=0.7]{figuras/exemplo.pdf} }}%
-	\caption{Exemplo do FEM em 2 dimensões}%
-	\label{fig:exemplo}%
-\end{figure}
-
-O primeiro passo consiste em realizar a triangulação da malha. Uma possibilidade de malha é apresentada na figura \ref{fig:exemplo}[b]. A estrutura de dados $tri$ contém a informação sobre quais vértices formam cada elemento enquanto a estrutura $nos$ possui as coordenadas de todos os vértices da geometria do problema. 
-
-O passo seguinte é a definição da função de interpolação. A aproximação da distribuição do potencial num dado elemento pode ser feita por uma função linear, como mostra a equação \ref{eq:interpEx}. Desta forma, os valores de $V$ em cada nó podem ser obtidos pelo sistema de equações \ref{eq:interpNoEx}
-
-\begin{equation}
-\label{eq:interpEx}
-\tilde{V^e} = a^e + b^e x + c^e y
-\end{equation}
-
-\begin{equation}
-\label{eq:interpNoEx}
-\begin{Bmatrix}
-\tilde{V^e_1}  \\
-\tilde{V^e_2} \\
-\tilde{V^e_3}
-\end{Bmatrix}
-=
-\begin{bmatrix}
-1 & x_1 & y_1 \\
-1 & x_2 & y_2 \\
-1 & x_3 & y_3
-\end{bmatrix}
-\begin{Bmatrix}
-a \\
-b \\
-c
-\end{Bmatrix}
-\end{equation}
-
-Deseja-se então resolver o problema encontrando os valores dos coeficientes $a$, $b$ e $c$ que fazem a aproximação de $V$. Dada a simplicidade o sistema ele pode ser resolvido invertendo-se a matriz por meio do cálculo dos determinantes e cofatores. Os valores da transposta da matriz de cofatores são dados na equação \ref{eq:cof} e o determinante na equação \ref{eq:det}. A equação \ref{eq:subs} contém a substituição na equação \ref{eq:interpEx} dos valores dos coeficientes calculados.
-
-\begin{equation}
-\label{eq:cof}
-cof(A^e)^T
-=
-\begin{bmatrix}
-(x_2y_3 - x_3y_2) & (x_3y_1 - x_1y_3) & (x_1y_2 - x_2y_1) \\
-(y_2 - y_3) & (y_3 - y_1) & (y_1 - y_2) \\
-(x_3 - x_2) & (x-1 - x_3) & (x_2 - x_1)
-\end{bmatrix}
-\end{equation}
-
-\begin{equation}
-\label{eq:det}
-det(A^e)
-=
-(x_1y_2 - x_2y_1)+
-(x_3y_1 - x_1y_3)+
-(x_2y_3 - x_3y_2)
-\end{equation}
-
-\begin{equation}
-\label{eq:subs}
-\tilde{V^e} = 
-\begin{Bmatrix}
-1 & x & y
-\end{Bmatrix}
-\begin{Bmatrix}
-a \\ b \\ b
-\end{Bmatrix}
-= \begin{Bmatrix}
-1 & x & y
-\end{Bmatrix}
-\frac{cof(A^e)^T}{det(A^e)}
-\begin{Bmatrix}
-\tilde{V^e_1}  \\
-\tilde{V^e_2} \\
-\tilde{V^e_3}
-\end{Bmatrix}
-=
- \sum_{j=1}^{3}{N_j^e (x, y) \tilde{V}_j^e}
-\end{equation}
-
-Obtidas as funções de interpolação $N^e$, a próxima etapa consiste  na montagem do sistema de equações do problema, começando pela definição das matrizes elementares. A distribuição do potencial é modelada pela equação de Laplace $\nabla^2 V = 0$. Substituindo esta equação em \ref{eq:res2} e adotando-se o método de Galerkin, tem-se a integral \ref{eq:lapPon}.
-
-\begin{equation}
-\label{eq:lapPon}
-\iint_{}{N^e_i \nabla^2 V^e dx dy} = R^e_i \qquad i = 1,2,3.
-\end{equation}  
-
-Aplicando a integração por partes fazendo $u = N$ e $dv = nabla^2 V$, tem-se como resultado da relação $\int u dv = uv - \int vdu$ a equação \ref{eq:posParte}.
-
-\begin{equation}
-\label{eq:posParte}
-\iint_{}{\nabla V^e \nabla N^e_i dx dy} = R^e_i \qquad i = 1,2,3.
-\end{equation} 
-
-Substituindo $V^e$ por sua aproximação obtida em (\ref{eq:subs}) obtém-se a fórmula da matriz elementar nas equações \ref{eq:integEl} e \ref{eq:matEl}.
-
-\begin{equation}
-\label{eq:integEl}
-\iint_{}{ \sum_{j=1}^{3}{\nabla N_j^e \tilde{V}_j^e} \nabla N^e_i dx dy} 
-=
-\sum_{j=1}^{3}\iint_{}{\left(\nabla N^e_i \nabla N_j^e \right)  \tilde{V}_j^e dx dy}
-= R^e_i \qquad i = 1,2,3.
-\end{equation} 
-
-\begin{equation}
-\label{eq:matEl}
-K^e_{ij} 
-= 
-\iint_{}{\left(\nabla N^e_i \nabla N_j^e \right)  dx dy}
-\end{equation} 
-
-De forma a agilizar os cálculos das matrizes elementares define-se na equação \ref{eq:PQA}  a partir dos elementos das equações \ref{eq:cof} e \ref{eq:det} as variáveis $P$, $Q$ e $A$. $P$ e $Q$ são obtidas a partir das simplificações nos cálculos e $A$ é a área do triângulo.  A equação \ref{eq:usoSimp} mostra como os coeficientes podem ser calculados após a simplificação
-
-\begin{equation}
-\label{eq:PQA}
-\begin{matrix}
-P_1 = (y_2 - y_3) & P_2 = (y_3 - y_1) & P_3 = (y_1 - y_1) \\
-Q_1 = (x_3 - x_2) & Q_2 = (x_1 - x_3) & Q_3 = (x_2 - x_1) \\
-\ & A = \frac{1}{2}(P_2Q_3 - P_3Q_2) & \
-\end{matrix}
-\end{equation}
-
-\begin{equation}
-\label{eq:usoSimp}
-K^e_{ij} 
-= 
-\frac{1}{4A}(P_iP_j + Q_iQ_j)
-\end{equation}
-
-As matrizes dos elementos e a matriz global são apresentadas nas equações \ref{eq:exMatel} e \ref{eq:exMatG}. Após a definição das matrizes elementares é realizado o mapeamento de seus coeficientes para a matriz global. Enquanto a matriz elementar é da ordem do número de nós do elemento, a matriz global de coeficientes é da ordem do número de nós da malha. O processo de mapeamento é detalhado no anexo \ref{ane:elDis}.
-
-\begin{equation}
-\label{eq:exMatel}
-K^1 = 
-\begin{pmatrix}
-0,560 &	-0,285 &	-0,274 \\
--0,285 &	0,592 &	-0,3066\\
--0,274 &	-0,306 &	0,580\\
-\end{pmatrix}
-\
-K^2 =
-\begin{pmatrix} 
-0,620 &	-0,257 &	-0,362\\
--0,257 &	0,509 &	-0,252\\
--0,362 &	-0,252 &	0,615
-\end{pmatrix}
-\end{equation}
-
-\begin{equation}
-\label{eq:exMatG}
-K = 
-\begin{pmatrix}
-0,560 &	-0,285 &	0&	-0,274\\
--0,285&	1,213&	-0,257&	-0,669\\
-0&	-0,257&	0,509&	-0,252\\
--0,274&	-0,669&	-0,252&	1,195
-\end{pmatrix}
-\end{equation}
 
 \subsection{Método dos gradientes conjugados}
 \label{sec:CG}
@@ -1226,7 +1062,7 @@ A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que co
 % ---
 % Inicia os apêndices
 % ---
-\iffalse
+
 \begin{apendicesenv}
 \label{chap:apendices}
 
@@ -1234,13 +1070,608 @@ A ferramenta \textit{pdetool} forneça a opção de refinamento da malha, que co
 \partapendices
 
 % ---
-\chapter{Tabelas do primeiro teste}
-apendice
+\chapter{Sistemas de elementos discretos}
+
+
+
+
+\label{sec:SED}
+
+\cite[p. 68]{desai} introduz o conceito de Método de Elementos Discretos (MED) como sendo uma etapa intermediária da formulação física MEF. Na representação em elementos discretos, cada elemento é unidimensional, de tal forma que o sistema completo é representado por uma estrutura aramada, conforme mostra a figura \ref{fig:malhaGenerica}.
+
+De forma similar, \cite[p. 2]{zien} apresenta o Sistema Discreto Padrão (SDP) como uma forma unificada de analisar problemas de natureza discreta.
+
+Em ambos os casos, os sistemas originais não se tratam de um contínuo, propriamente dito, mas de um sistema composto por partes. Cada parte por si só é um componente físico funcional, seja ela uma viga, um tubo ou um resistor, por exemplo. Entender o sistema de elementos discretos é importante para compreensão do funcionamento do MEF \cite[p. 6]{zien}, cujos elementos (quadrados, triângulos ou tetraedros) não são funcionais ou não possuem um significado físico fora do sistema.
+
+
+\section{Modelo de Elementos Discretos}
+
+Considere a malha bidimensional  apresentada na figura \ref{fig:malhaGenerica}. Esta malha pode representar por exemplo, a abstração de uma estrutura mecânica (pórtico), de um sistema hidráulico ou de circuito elétrico, como o apresentado na figura \ref{fig:repMalhaGenerica}.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=0.7]{figuras/malhaGen.pdf}	
+	\caption{identificação global e local}
+	\label{fig:malhaGenerica}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=0.6]{figuras/circuito.pdf}
+	\caption{Circuito puramente resistivo, um possível objeto de representação da malha da figura \ref{fig:malhaGenerica}}
+	\label{fig:repMalhaGenerica}
+\end{figure}
+
+Na figura \ref{fig:malhaGenerica}, os elementos são identificados por números (sem parentesis) de $1$ a $6$. A identificação de cada nó, ou junção, é feita entre parêntesis. Na figura \ref{fig:malhaGenerica}$(a)$, em negrito, cada nó é relacionado à um identificador global, enquanto na figura \ref{fig:malhaGenerica}$(b)$, os nós possuem identificadores locais, relativos não ao conjunto total de nós, mas apenas aos nós de um dado elemento. Estes identificadores são necessários para a análise de um único elemento e em seguida para a montagem do sistema como um todo.
+
+Fazendo a analogia com um pórtico, as forças que atuam sobre cada nó, podem ser definidas a partir dos deslocamento destes nós \cite[p. 3]{zien}. Esta relação é dada pela lei de Hooke simples, mostrada na equação \ref{eq:hooke1}, na qual as forças $Q_1$ e $Q_2$ sobre os nós de um elemento são dadas calculadas em função dos deslocamentos $u_1$ e $u_2$. A constante $A$ é a área do elemento, $E$ é o módulo de Young (Módulo de Elasticidade) e $l$ é o cumprimento do elemento \cite[p. 13]{desai}.
+
+\begin{equation}
+\label{eq:hooke1}
+\left \{
+\begin{tabular}{c}
+$Q_1$ \\
+$Q_2$
+\end{tabular}       
+\right \} =
+\frac{AE}{l}
+\begin{bmatrix}
+1 & -1 \\
+-1 & 1
+\end{bmatrix}      
+\left \{
+\begin{tabular}{c}
+$u_1$ \\
+$u_2$
+\end{tabular}       
+\right \}            
+\end{equation}
+
+
+No circuito resistivo da figura \ref{fig:repMalhaGenerica}, a relação para um elemento é dada pela Lei de Ohm, na qual as correntes em cada nó, podem ser definidas à partir das tensões nos terminais do elemento. Na equação \ref{eq:ohm1}, $I_a$ e $V_a$ são respectivamente a corrente e a tensão no nó $a$ de um elemento, enquanto $R$ é a resistência do mesmo \cite[p. 7]{zien}.
+
+\begin{equation}
+\label{eq:ohm1}
+\left \{
+\begin{tabular}{c}
+$I_1$ \\
+$I_2$
+\end{tabular}       
+\right \} =
+\frac{1}{R}
+\begin{bmatrix}
+1 & -1 \\
+-1 & 1
+\end{bmatrix}      
+\left \{
+\begin{tabular}{c}
+$V_1$ \\
+$V_2$
+\end{tabular}       
+\right \}            
+\end{equation}
+
+O padrão encontrado nas equações \ref{eq:hooke1} e \ref{eq:ohm1} pode ser generalizado para outros campos da engenharia, ciência e até mesmo administração e economia, desde que possam ser modelados por sistema de equações lineares \cite[p. 331]{burdenFaires}.
+
+A questão a ser respondida é: Como analisar o efeito global de uma ação realizada em um conjunto limitado de nós? Por exemplo, como obter o potencial elétrico nos nós $3$, $4$ e $5$, da figura \ref{fig:repMalhaGenerica}, a partir da aplicação das tensões $9V$ e $0V$ nos nós $1$ e $2$ respectivamente? Como compilar os resultados locais  para o cálculo de grandezas secundárias, como a corrente ou potência elétrica em cada elemento, por exemplo? Estas questões serão respondidas nas duas subseções seguintes.
+
+
+section{Equações do Elemento Discreto}
+
+Se um fenômeno que atua sobre um dado elemento $e$ é modelado por um sistema de equações lineares,  pode ser representado em sua forma matricial como:
+
+\begin{equation}
+\label{eq:sisLinGen}
+\{q^e\} = [K^e] \{u^e\} + \{f^e\}
+\end{equation}
+
+O vetor $q$ é conhecido ou parcialmente conhecido. Ele é geralmente uma grandeza secundária, calculada a partir da distribuição da grandeza primária $u$ desconhecida. A matriz $K$ é a matriz de coeficientes e determina como é feita a distribuição da grandeza $u$. No exemplo de estruturas, $K$ é a matriz de rigidez, $q$ é o conjunto de forças que atuam nos nós do elemento e $u$ é o deslocamento destes nós causados por estas forças. Para circuitos elétricos, $K$ relaciona as resistências do sistema, $q$ é a corrente no elemento, originada pela diferença de potencial $u$ em seus nós. O vetor $f$ é o estado inicial do elemento. Caso este estado seja de equilíbrio (sem torção inicial ou corrente residual, por exemplo), $f$ é igual a zero \cite[p. 7]{zien}.
+
+As componentes de cada vetor da equação \ref{eq:sisLinGen} são relativas aos nós do elemento e a ordem da matriz $K$ é igual ao número de nós deste elemento. O número de nós de um elemento também é denominado \textbf{grau de liberdade} \cite[p. 5]{zien}. A equação \ref{eq:assembly} mostra a representação de um elemento com grau de liberdade  $m$. Se vista como uma matriz de adjacência, $K$ mostra como cada nó se relaciona com os demais. 
+
+\begin{equation}
+\label{eq:assembly}
+\begin{tabular}{c c c}
+$q^e = 
+\left \{
+\begin{tabular}{c}
+$q^e_1$ \\
+$q^e_2$ \\
+\vdots \\
+$q^e_m$
+\end{tabular}       
+\right \}$
+\
+$u^e = 
+\left \{
+\begin{tabular}{c}
+$u_1$ \\
+$u_2$ \\
+\vdots \\
+$u_m$
+\end{tabular}       
+\right \}   $
+\
+$K^e =
+\begin{bmatrix}
+K^e_{11}    & K^e_{12}  & \dots     & K^e_{1m} \\
+K^e_{11}    & \ddots  & \   & \vdots \\
+\vdots  & \vdots     & \    & \vdots \\
+K^e_{m1}    & \dots   & \dots   & K^e_{mm} 
+\end{bmatrix}    $      
+\end{tabular} 
+\end{equation}
+
+
+Como pode ser visto na figura \ref{fig:malhaGenerica}$(b)$, cada elemento compartilha nós com seus vizinhos, de forma que, o resultado obtido no nó de um elemento deve ser compatível com os resultados obtidos nos outros elementos, para o mesmo nó. Esta condição de compatibilidade e equilíbrio será vista na subseção seguinte.
+
+\section{Montagem do Sistema Global}
+
+Para que uma ação local em um nó seja corretamente transmitida para os nós vizinhos, e dessa forma tenha seus efeitos refletidos em todo o sistema, é necessário relacionar todos os elementos e nós em um único sistema de equações. A equação \ref{eq:sisLinGen2} mostra um sistema global genérico. Sendo $n$ o número total de nós, $q$, $u$ e $f$ são vetores coluna de comprimento $n$ e $K$ é uma matriz quadrada de ordem $n$.
+
+\begin{equation}
+\label{eq:sisLinGen2}
+\{q\} = [K] \{u\} + \{f\}
+\end{equation}
+
+A montagem do sistema \ref{eq:sisLinGen2} consiste no mapeamento dos sistemas elementares para um único sistema global e na aplicação das condições de equilíbrio pertinentes ao problema \cite[p. 5]{zien}.
+
+No mapeamento, a matriz global de coeficientes pode ser vista como uma matriz de adjacência de todos os nós. Desta forma, ações locais sobre um elemento podem ser propagadas para os elementos vizinhos.
+Enquanto nas equações elementares os nós são referenciados localmente, como na figura \ref{fig:malhaGenerica}$(b)$, no sistema global cada nó possui uma única referência, conforme a figura \ref{fig:malhaGenerica}$(a)$. As influências de diferentes elementos sobre um nó são somadas na matriz global, de forma que se tenha uma influência resultante.
+
+O próximo passo é a aplicação da condição de equilíbrio para cada nó, conforme a lei que modela o problema. Para problemas de mecânica, por exemplo, a condição de equilíbrio dada pela 3ª lei de Newton diz que o somatório das forças em um ponto é igual a zero. Similarmente na análise de circuitos, a lei de Kirchoff diz que a soma das correntes que entram e saem de um nó também é igual a zero. A equação \ref{eq:somaForcas} mostra a aplicação da condição de equilíbrio no nó $a$.
+
+
+\begin{equation}
+\label{eq:somaForcas}
+\sum_{e=1}^{m}{q_a^e = q_a^1 + q_a^2 + \dots = 0}
+\end{equation}
+
+Considerando que o estado inicial $f$ do corpo é nulo, o sistema \ref{eq:sisLinGen2} que possui $m$ nós e $n$ elementos, pode ser representado como 
+
+\begin{equation}
+\label{eq:equilibrio}
+q =
+\sum_{b=1}^{n}\sum_{e=1}^{m}{K_{ab}^e u_b = 0}
+\end{equation}
+
+
+\section{Atribuição das condições de Contorno}
+A atribuição dos valores de contorno consiste na imposição dos valores preestabelecidos da variável $u$. No exemplo \ref{fig:repMalhaGenerica}, as condições de contorno são os valores da tensão $u$  impostos nos nós $1$ e $2$, como mostra a equação a seguir
+
+\begin{equation}
+\label{eq:condIni}
+u = 
+\left \{
+\begin{tabular}{c}
+$9V$ \\
+$0V$ \\
+$u_3$ \\
+$u_4$ \\
+$u_5$ \\
+\end{tabular}       
+\right \}   
+\end{equation}
+
+Com isso, a inserção de valores de contorno no sistema promove a redução do número de equações de equilíbrio do sistema apresentado em \ref{eq:equilibrio}, por meio da eliminação das linhas cujo valor de $u$ já foi especificado \cite[p. 5]{zien}.
+
+\section{Exemplo: Associação de resistores}
+
+A partir dos passos apresentados nas subseções acima, deve-se determinar os valores das tensões nós nós $3$, $4$ e $5$ à partir da diferença de potencial entre os nós $1$ e $2$.
+
+O primeiro passo para a resolução do problema é a especificação das equações de cada elemento. Como é apresentado na equação \ref{eq:ohm1}, as correntes em cada nó de um elemento são dadas pelas diferenças de potencial destes nós. Com isso, para cada resistor, tem-se:
+
+\begin{equation}
+\label{eq:ohmMalha}
+\begin{tabular}{l l}
+$
+e = 1:
+\left \{
+\begin{tabular}{l}
+$I_1^1 = \frac{1}{3} (V_1^1 - V_2^1)$ \\
+$I_2^1 = \frac{1}{3} (-V_1^1 + V_2^1)$
+\end{tabular}       
+\right .       
+$
+&
+$
+e = 2:
+\left \{
+\begin{tabular}{l}
+$I_1^2 = V_1^2 - V_2^2$ \\
+$I_2^2 = -V_1^2 + V_2^2$
+\end{tabular}       
+\right .       
+$
+\\ \\
+$
+e = 3:
+\left \{
+\begin{tabular}{l}
+$I_1^3 = V_1^3 - V_2^3$ \\
+$I_2^3 = -V_1^3 + V_2^3$
+\end{tabular}       
+\right .       
+$
+&
+$
+e = 4:
+\left \{
+\begin{tabular}{l}
+$I_1^4 = V_1^4 - V_2^4$ \\
+$I_2^4 = -V_1^4 + V_2^4$
+\end{tabular}       
+\right .       
+$
+\\ \\
+$
+e = 5:
+\left \{
+\begin{tabular}{l}
+$I_1^5 = \frac{1}{2} (V_1^5 - V_2^5)$ \\
+$I_2^5 = \frac{1}{2} (-V_1^5 + V_2^5)$
+\end{tabular}       
+\right .       
+$
+&
+$
+e = 6:
+\left \{
+\begin{tabular}{l}
+$I_1^6 = V_1^6 - V_2^6$ \\
+$I_2^6 = -V_1^6 + V_2^6$
+\end{tabular}       
+\right .       
+$                    
+\end{tabular}               
+\end{equation}
+
+Uma vez definidas as equações de cada elemento é feita a montagem do sistema global. Conforme dito anteriormente, a etapa de montagem consiste no mapeamento da numeração local dos nós para um sistema de numeração global. Analisando a figura \ref{fig:malhaGenerica}$(b)$, é possível notar que os nós $1$ e $2$ do elemento $2$, por exemplo, são os nós $2$ e $3$ do sistema global apresentado na figura \ref{fig:malhaGenerica}$(a)$. A tabela \ref{tab:mapLG} relaciona os identificadores locais e seus equivalentes no sistema global.
+
+\begin{table} 
+	\centering
+	\begin{tabular}{|c|c|}  
+		\hline
+		\textbf{Identificação Local} 
+		& \textbf{Identificação Global} \\  
+		\hline
+		$e_1^1, e_2^6$ 
+		& $1$ \\
+		\hline
+		$e_2^1, e_1^2$
+		& $2$  \\
+		\hline
+		$e_2^2, e_1^3, e_1^5$
+		& $3$ \\
+		\hline
+		$e_2^3, e_1^4$
+		& $4$  \\
+		\hline
+		$e_2^4, e_2^5, e_1^6$
+		& $5$  \\        
+		\hline
+	\end{tabular}
+	\caption{Mapeamento dos identificadores locais do circuito da figura \ref{fig:malhaGenerica}}
+	\label{tab:mapLG}
+\end{table}
+
+A equação \ref{eq:mapE1} a seguir, apresenta o mapeamento do elemento $1$ e em seguida, na equação \ref{eq:mapE2}, é incluído o mapeamento do elemento $2$.  
+
+\begin{equation}
+\label{eq:mapE1}
+\left \{
+\begin{tabular}{c}
+$I_1$ \\
+$I_2$ \\
+$I_3$ \\
+$I_4$ \\
+$I_5$          
+\end{tabular}       
+\right \}
+=
+\begin{bmatrix}
+\frac{1}{3} & \frac{-1}{3}  & 0 & 0 & 0 \\
+\frac{-1}{3} & \frac{1}{3}  & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+\end{bmatrix} 
+\left \{
+\begin{tabular}{c}
+$V_1$ \\
+$V_2$ \\
+$V_3$ \\
+$V_4$ \\
+$V_5$          
+\end{tabular}       
+\right \}	                     
+\end{equation}
+
+\begin{equation}
+\label{eq:mapE2}
+\left \{
+\begin{tabular}{c}
+$I_1$ \\
+$I_2$ \\
+$I_3$ \\
+$I_4$ \\
+$I_5$          
+\end{tabular}       
+\right \}
+=
+\begin{bmatrix}
+\frac{1}{3} & \frac{-1}{3}  & 0 & 0 & 0 \\
+\frac{-1}{3} & \frac{1}{3}+1  & -1 & 0 & 0 \\
+0 & -1 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+\end{bmatrix} 
+\left \{
+\begin{tabular}{c}
+$V_1$ \\
+$V_2$ \\
+$V_3$ \\
+$V_4$ \\
+$V_5$          
+\end{tabular}       
+\right \}	                     
+\end{equation}
+
+Todas as contribuições em um dado nó, devem ser consideradas. Por este motivo, quando houverem influências de diferentes elementos sobre um nó, as mesmas devem ser somadas no sistema global. A equação \ref{eq:mapFinal} apresenta o sistema global final, com as contribuições de todos os $6$ elementos.
+
+\begin{equation}
+\label{eq:mapFinal}
+\left \{
+\begin{tabular}{c}
+$I_1$ \\
+$I_2$ \\
+$I_3$ \\
+$I_4$ \\
+$I_5$          
+\end{tabular}       
+\right \}
+=
+\begin{bmatrix}
+\frac{1}{3} & \frac{-1}{3}  & 0 & 0 & 0 \\
+\frac{-1}{3} & \frac{4}{3}  & -1 & 0 & 0 \\
+0 & -1 & 2 & -1 & 0 \\
+0 & 0 & -1 & 2 & -1 \\
+0 & 0 & 0 & -1 & 1 \\
+\end{bmatrix} 
+\left \{
+\begin{tabular}{c}
+$V_1$ \\
+$V_2$ \\
+$V_3$ \\
+$V_4$ \\
+$V_5$          
+\end{tabular}       
+\right \}	                     
+\end{equation}
+
 
 % ---
 
+
+
+\chapter{Método dos elementos finitos em 2 dimensões}
+\label{sec:fem2d}
+Neste capítulo será apresentada a solução de um modelo de elementos finitos. O exemplo desenvolvido foi adaptado do exemplo $6.1$ de \citeonline{sadiku}. Deseja-se saber o valor do potencial elétrico nos pontos $a$ e $b$ da placa submetida a uma diferença de potencial de $10V$, como mostra a figura \ref{fig:exemplo}{a}.
+
+\begin{figure}%
+	\centering
+	\subfloat[Geometria do problema]{{\includegraphics[scale=0.7]{figuras/exemploG.pdf} }}%
+	\qquad
+	\subfloat[Triangulação do problema]{{\includegraphics[scale=0.7]{figuras/exemplo.pdf} }}%
+	\caption{Exemplo do FEM em 2 dimensões}%
+	\label{fig:exemplo}%
+\end{figure}
+
+O primeiro passo consiste em realizar a triangulação da malha. Uma possibilidade de malha é apresentada na figura \ref{fig:exemplo}[b]. A estrutura de dados $tri$ contém a informação sobre quais vértices formam cada elemento enquanto a estrutura $nos$ possui as coordenadas de todos os vértices da geometria do problema. 
+
+O passo seguinte é a definição da função de interpolação. A aproximação da distribuição do potencial num dado elemento pode ser feita por uma função linear, como mostra a equação \ref{eq:interpEx}. Desta forma, os valores de $V$ em cada nó podem ser obtidos pelo sistema de equações \ref{eq:interpNoEx}
+
+\begin{equation}
+\label{eq:interpEx}
+\tilde{V^e} = a^e + b^e x + c^e y
+\end{equation}
+
+\begin{equation}
+\label{eq:interpNoEx}
+\begin{Bmatrix}
+\tilde{V^e_1}  \\
+\tilde{V^e_2} \\
+\tilde{V^e_3}
+\end{Bmatrix}
+=
+\begin{bmatrix}
+1 & x_1 & y_1 \\
+1 & x_2 & y_2 \\
+1 & x_3 & y_3
+\end{bmatrix}
+\begin{Bmatrix}
+a \\
+b \\
+c
+\end{Bmatrix}
+\end{equation}
+
+Deseja-se então resolver o problema encontrando os valores dos coeficientes $a$, $b$ e $c$ que fazem a aproximação de $V$. Dada a simplicidade o sistema ele pode ser resolvido invertendo-se a matriz por meio do cálculo dos determinantes e cofatores. Os valores da transposta da matriz de cofatores são dados na equação \ref{eq:cof} e o determinante na equação \ref{eq:det}. A equação \ref{eq:subs} contém a substituição na equação \ref{eq:interpEx} dos valores dos coeficientes calculados.
+
+\begin{equation}
+\label{eq:cof}
+cof(A^e)^T
+=
+\begin{bmatrix}
+(x_2y_3 - x_3y_2) & (x_3y_1 - x_1y_3) & (x_1y_2 - x_2y_1) \\
+(y_2 - y_3) & (y_3 - y_1) & (y_1 - y_2) \\
+(x_3 - x_2) & (x-1 - x_3) & (x_2 - x_1)
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:det}
+det(A^e)
+=
+(x_1y_2 - x_2y_1)+
+(x_3y_1 - x_1y_3)+
+(x_2y_3 - x_3y_2)
+\end{equation}
+
+\begin{equation}
+\label{eq:subs}
+\tilde{V^e} = 
+\begin{Bmatrix}
+1 & x & y
+\end{Bmatrix}
+\begin{Bmatrix}
+a \\ b \\ b
+\end{Bmatrix}
+= \begin{Bmatrix}
+1 & x & y
+\end{Bmatrix}
+\frac{cof(A^e)^T}{det(A^e)}
+\begin{Bmatrix}
+\tilde{V^e_1}  \\
+\tilde{V^e_2} \\
+\tilde{V^e_3}
+\end{Bmatrix}
+=
+\sum_{j=1}^{3}{N_j^e (x, y) \tilde{V}_j^e}
+\end{equation}
+
+Obtidas as funções de interpolação $N^e$, a próxima etapa consiste  na montagem do sistema de equações do problema, começando pela definição das matrizes elementares. A distribuição do potencial é modelada pela equação de Laplace $\nabla^2 V = 0$. Substituindo esta equação em \ref{eq:res2} e adotando-se o método de Galerkin, tem-se a integral \ref{eq:lapPon}.
+
+\begin{equation}
+\label{eq:lapPon}
+\iint_{}{N^e_i \nabla^2 V^e dx dy} = R^e_i \qquad i = 1,2,3.
+\end{equation}  
+
+Aplicando a integração por partes fazendo $u = N$ e $dv = nabla^2 V$, tem-se como resultado da relação $\int u dv = uv - \int vdu$ a equação \ref{eq:posParte}.
+
+\begin{equation}
+\label{eq:posParte}
+\iint_{}{\nabla V^e \nabla N^e_i dx dy} = R^e_i \qquad i = 1,2,3.
+\end{equation} 
+
+Substituindo $V^e$ por sua aproximação obtida em (\ref{eq:subs}) obtém-se a fórmula da matriz elementar nas equações \ref{eq:integEl} e \ref{eq:matEl}.
+
+\begin{equation}
+\label{eq:integEl}
+\iint_{}{ \sum_{j=1}^{3}{\nabla N_j^e \tilde{V}_j^e} \nabla N^e_i dx dy} 
+=
+\sum_{j=1}^{3}\iint_{}{\left(\nabla N^e_i \nabla N_j^e \right)  \tilde{V}_j^e dx dy}
+= R^e_i \qquad i = 1,2,3.
+\end{equation} 
+
+\begin{equation}
+\label{eq:matEl}
+K^e_{ij} 
+= 
+\iint_{}{\left(\nabla N^e_i \nabla N_j^e \right)  dx dy}
+\end{equation} 
+
+De forma a agilizar os cálculos das matrizes elementares define-se na equação \ref{eq:PQA}  a partir dos elementos das equações \ref{eq:cof} e \ref{eq:det} as variáveis $P$, $Q$ e $A$. $P$ e $Q$ são obtidas a partir das simplificações nos cálculos e $A$ é a área do triângulo.  A equação \ref{eq:usoSimp} mostra como os coeficientes podem ser calculados após a simplificação
+
+\begin{equation}
+\label{eq:PQA}
+\begin{matrix}
+P_1 = (y_2 - y_3) & P_2 = (y_3 - y_1) & P_3 = (y_1 - y_1) \\
+Q_1 = (x_3 - x_2) & Q_2 = (x_1 - x_3) & Q_3 = (x_2 - x_1) \\
+\ & A = \frac{1}{2}(P_2Q_3 - P_3Q_2) & \
+\end{matrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:usoSimp}
+K^e_{ij} 
+= 
+\frac{1}{4A}(P_iP_j + Q_iQ_j)
+\end{equation}
+
+As matrizes dos elementos e a matriz global são apresentadas nas equações \ref{eq:exMatel} e \ref{eq:exMatG}. Após a definição das matrizes elementares é realizado o mapeamento de seus coeficientes para a matriz global. Enquanto a matriz elementar é da ordem do número de nós do elemento, a matriz global de coeficientes é da ordem do número de nós da malha. O processo de mapeamento é detalhado no apêndice \ref{sec:SED}.
+
+\begin{equation}
+\label{eq:exMatel}
+K^1 = 
+\begin{pmatrix}
+0,560 &	-0,285 &	-0,274 \\
+-0,285 &	0,592 &	-0,3066\\
+-0,274 &	-0,306 &	0,580\\
+\end{pmatrix}
+\
+K^2 =
+\begin{pmatrix} 
+0,620 &	-0,257 &	-0,362\\
+-0,257 &	0,509 &	-0,252\\
+-0,362 &	-0,252 &	0,615
+\end{pmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:exMatG}
+K = 
+\begin{pmatrix}
+0,560 &	-0,285 &	0&	-0,274\\
+-0,285&	1,213&	-0,257&	-0,669\\
+0&	-0,257&	0,509&	-0,252\\
+-0,274&	-0,669&	-0,252&	1,195
+\end{pmatrix}
+\end{equation}
+
+A atribuição dos valores de contorno consiste na redução da ordem na matriz \ref{eq:exMatG} por meio da eliminação dos graus de liberdade (nós) com valores pré estabelecidos (contorno). As equações \ref{eq:exMatCont1} e \ref{eq:exMatCont2} exibem o sistema reduzido e a solução.
+
+\begin{equation}
+\label{eq:exMatCont1}
+\begin{pmatrix}
+0,560 &	-0,285 &	0&	-0,274\\
+-0,285&	1,213&	-0,257&	-0,669\\
+0&	-0,257&	0,509&	-0,252\\
+-0,274&	-0,669&	-0,252&	1,195
+\end{pmatrix}
+\begin{Bmatrix}
+10 \\
+V^2\\
+0\\
+V^4
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+0\\
+0\\
+0\\
+0
+\end{Bmatrix}
+\end{equation}
+
+
+\begin{equation}
+\label{eq:exMatCont2}
+\begin{pmatrix}
+-0.285  & -0.257\\
+-0.274 &  -0.252\\
+\end{pmatrix}
+\begin{Bmatrix}
+V^2\\
+V^4
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+ 2.858\\
+ 2.741
+\end{Bmatrix}
+\Rightarrow
+\begin{Bmatrix}
+V^2 \\
+V^4
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+5.241\\
+5.227
+\end{Bmatrix}
+\end{equation}
 
 \end{apendicesenv}
 % ---
-\fi
+
 \end{document}

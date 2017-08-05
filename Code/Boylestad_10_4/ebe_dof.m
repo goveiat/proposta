@@ -24,6 +24,22 @@ qtdN = size(n, 2);
 
 G = matG(A, t, qtdN, qtdT);
 
+%obtém as ondições de x
+[x, pts] = defContorno(n, qtdN);
+r_v = [10 -1 0 -1]
+f = find(r_v == -1);
+p = find(r_v ~= -1);
+Vp = r_v(p)';
+Gff = G(f, f);
+Gfp = G(f, p);
+b = -Gfp*Vp;
+Vf = Gff\b;
+r_v(r_v == -1) = Vf;
+m_v = reshape(r_v, r_qtdNos)';
+
+%Direto
+sol = G\b;
+
 %inicialização do rhs
 b = cell(qtdT,1);
 for e = 1:qtdT
