@@ -1038,7 +1038,8 @@ O objetivo desta primeira etapa de atividades é validar o processo de paraleliz
 
 \subsubsection*{\textit{Overview} da triangulação}
 No início do desenvolvimento foram selecionados pontos de referência a fim de se estimar a precisão das aproximações, com base nos resultados da \text{pdetool} (figura \ref{fig:solPde}).
-A \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, a opção de refinamento programático disponibilizada pela \textit{toolbox} é dada pelo parâmetro \textit{Hmax} da função \textit{generateMesh} (algoritmo \ref{alg:FEM}). Enquanto o refinamento da \textit{pdetool} mantém os pontos da malha original, a alteração do \textit{Hmax} gera uma nova malha, fazendo com que os pontos de referência se percam. Embora essa abordagem possibilite o maior controle da quantidade de elementos, ela impossibilita a verificação da precisão do valor de um ponto após o refinamento. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Como não se pôde observar a precisão foi observado o valor médio próximo aos pontos de referência. 
+A \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, a opção de refinamento programático disponibilizada pela \textit{toolbox} é dada pelo parâmetro \textit{Hmax} da função \textit{generateMesh} (algoritmo \ref{alg:FEM}). Enquanto o refinamento da \textit{pdetool} mantém os pontos da malha original, a alteração do \textit{Hmax} gera uma nova malha, fazendo com que os pontos de referência se percam. Embora essa abordagem possibilite o maior controle da quantidade de elementos, ela impossibilita a verificação da precisão do valor de um ponto após o refinamento. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Como não se pôde observar a precisão foi observado o valor médio próximo aos pontos de referência.  A tabela \ref{tab:hmax} apresenta a quantidade de elementos e nós gerados para cada valor de $Hmax$.
+
 
 \begin{figure}%
 	\centering	
@@ -1049,8 +1050,7 @@ A \textit{pdetool} forneça a opção de refinamento da malha, que consiste na s
 	\label{fig:vizinha}%
 \end{figure}
 
-A tabela \ref{tab:hmax} apresenta a quantidade de elementos e nós gerados para cada valor de $Hmax$.
-\begin{table} 
+ \begin{table}
 	\centering
 	\begin{tabular}{|l|l|l|}  
 		\hline
@@ -1080,26 +1080,29 @@ Conforme apresentado no capítulo de materiais e métodos, foram desenvolvidas d
 A primeira versão do algoritmo proposta por \citeonline{Kiss2012} apresenta coloração e é paralelizável, no entanto, devido às restrições dos blocos \textit{parfor} e \textit{spmd} da \textit{parallel computing toolbox} do \matlab foi possível testá-la apenas em sua sequencialmente.
 A segunda implementação utiliza uma estrutura de dados distribuída e desacoplada para atender aos critérios de ``fatiamento'' e independência dos blocos \textit{parfor} e \textit{spmd}.
 
+A tabela \ref{tab:seq} exiibe os resultados das execuções com o uso de \textit{solvers} sequenciais. as linhas indicadas com $x$ mostram as limitações do processo de montagem da matriz global devido ao uso excessivo de memória. A mensagem de erro retornada pelo \matlab é \textit{Requested 44692x44692 (14.9GB) array exceeds maximum array size preference}. A adoção do mecanismo de matrizes esparsas do \matlab no entanto possibilitou que o uso de memória e o percentual de CPU fossem reduzidos. Os \textit{solvers} de matrizes esparsas e o EbE apresentaram um uso equilibrado da CPU em relação ao \textit{mldivide} e \textit{CG} com matrizes \textit{full} que aumentaram o percentual do uso da CPU à medida que o número de elementos da malha aumentou. A figura \ref{fig:grafSeq} exibe a comparação do tempo de processamento e uso de memória dos \textit{solvers} mais competitivos para para os refinamentos $0.3$, $0.2$ e $0.1$.
 
-\subsubsection*{Resultados numéricos}
+\begin{figure}%
+	\centering	
+	\subfloat[Comparação do tempo de execução (s)]{{\includegraphics[scale=0.6]{figuras/grafSeqTempo.pdf} }}%
+	\qquad
+	\subfloat[Comparação do uso de memória (MiB)]{{\includegraphics[scale=0.6]{figuras/grafSeqMemo.pdf} }}%
+	\caption{Comparação do EbE com soluções sequenciais eficientes}%
+	\label{fig:grafSeq}%
+\end{figure}
 
-
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow}
 \begin{table}[]
 	\centering
-	\caption{Tempo de Execução, consumo de memória e uso da CPU dos solvers sequenciais}
-	\label{my-label}
 	\begin{tabular}{|l|l|l|l|l|}
 		\hline
 		\textbf{Solver}                         & \textbf{Hmax} & \textbf{Tempo (s)} & \textbf{Memo (MiB)} & \textbf{\%CPU} \\ \hline
-		\multirow{6}{*}{\textbf{\matlab}}        & 0.6           & 0.390717           & 22.1                & 8              \\ \cline{2-5} 
+		\multirow{6}{*}{\textbf{mldivide}}        & 0.6           & 0.390717           & 22.1                & 8              \\ \cline{2-5} 
 		& 0.5           & 0.524704           & 37                  & 24             \\ \cline{2-5} 
 		& 0.4           & 0.911115           & 81.8                & 28             \\ \cline{2-5} 
 		& 0.3           & 2.572255           & 215.2               & 29             \\ \cline{2-5} 
 		& 0.2           & 21.337269          & 995                 & 50             \\ \cline{2-5} 
 		& 0.1           & x                  & x                   & x              \\ \hline
-		\multirow{3}{*}{\textbf{\matlab Sparse}} & 0.3           & 2.447401           & 0.05                & 25             \\ \cline{2-5} 
+		\multirow{3}{*}{\textbf{mldivide Sparse}} & 0.3           & 2.447401           & 0.05                & 25             \\ \cline{2-5} 
 		& 0.2           & 6.158577           & 0.08                & 26             \\ \cline{2-5} 
 		& 0.1           & 76.558448          & 17.2                & 29             \\ \hline
 		\multirow{6}{*}{\textbf{CG}}            & 0.6           & 0.541897           & 32.9                & 19             \\ \cline{2-5} 
@@ -1119,10 +1122,29 @@ A segunda implementação utiliza uma estrutura de dados distribuída e desacopl
 		& 0.2           & 111.13326          & 11.8                & 29             \\ \cline{2-5} 
 		& 0.1           & 996.990077         & 52.9                & 29             \\ \hline
 	\end{tabular}
+	\caption{Tempo de Execução, consumo de memória e uso da CPU dos solvers sequenciais}	
+	\label{tab:seq}	
+\end{table}
+
+Como pode ser visto na tabela \ref{tab:comPar} o desempenho das implementações paralelas do EbE com coloração foram muito piores em relação a tempo de execução que a implementação sequencial. Como pode ser visto na última coluna, uma iteração do CG com $spmd$ demorou cerca de $66$ vezes mais que a versão sequencial e e a solução completa  do problema $48$ vezes mais. Após dezenas de adaptações no algoritmo e nas estruturas de dados a fim de melhorar estes números foi verificado por meio da leitura mais aprofundada da documentação que a existência dos comandos \textit{parfor} e \textit{spmd} dentro de \textit{loops} não é recomendada visto que a cada iteração do \textit{loop} externo ocorre troca de mensagens entre o processo \textit{client} e os \textit{workers}. Além disso, a documentação informa que iterações que a presentam operações simples e baixo tempo de execução não devem ser paralelizadas pela  \textit{toolbox} devido ao custo adicional de memória e comunicação para se criar e manter os \textit{workers}.
+
+\begin{table}[]
+	\centering
+	\label{tab:comPar}
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		\textbf{}                & \textbf{Sequencial} & \textbf{ParFor} & \textbf{SPMD} & \textbf{ParFor/seq.} & \textbf{SPMD/seq.} \\ \hline
+		\textbf{Tempo iter. (s)} & 0,0023883636        & 0,0525300909    & 0,1203660909  & 28,1487395331        & 65,6833115874      \\ \hline
+		\textbf{\% CPU}          & 28                  & 74              & 42            & 2,6428571429         & 1,5                \\ \hline
+		\textbf{Tempo Total (s)} & 4,53238             & 84,250123       & 219,345573    & 18,588495007         & 48,3952300999      \\ \hline
+	\end{tabular}
+	\caption{Comparação das implementações paralelas para $Hmax = 1$}
 \end{table}
 
 
 
+\chapter{Conclusão}
+O EbE-FEM se mostrou uma estratégia competitiva para o processamento de sistemas esparsos em relação aos \textit{solvers} otimizados \textit{mldivide} e \textit{CG}, sobretudo na demanda de memória. A paralelização adequada deste algoritmo por meio do uso de \textit{threads} tende a ser promissora na melhoria do tempo de processamento apresentado na figura \ref{fig:grafSeq}. Os desafios enfrentados na paralelização do algoritmo por meio dos blocos \textit{parfor} e \textit{spmd} possibilitaram a criação de duas versões do EbE, sendo uma de memória compartilhada e outra de memória distribuída, que facilita na adaptação do código para as linguagens e arquiteturas que serão utilizadas na segunda etapa do trabalho.
 % ----------------------------------------------------------
 % ELEMENTOS PÓS-TEXTUAIS
 % ----------------------------------------------------------
