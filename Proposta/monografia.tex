@@ -65,7 +65,7 @@
 
 %Espaçamento em formulas e tabelas
 \renewcommand{\arraystretch}{1.3}
-\newcommand{\matlab}{MATLAB\textsuperscript{\textregistered}}
+\newcommand{\matlab}{MATLAB\textsuperscript{\textregistered} \ }
 
 % Please add the following required packages to your document preamble:
 \usepackage{multirow}
@@ -343,21 +343,21 @@ Resumo...
 	O método dos elementos finitos (FEM) é um método numérico para a resolução de problemas de valor de contorno (PVC) modelados por equações diferenciais e também de problemas associados à minimização de um funcional de energia \cite{Szabo2009}. O algoritmo clássico do FEM foi concebido em sua forma sequencial e consiste principalmente na solução de um sistema linear esparso. A tarefa de se resolver tal sistema é geralmente custosa em termos de memória quando adotados métodos diretos como a eliminação gaussiana e computacionalmente custosa quando adotados métodos iterativos como o método de Jacobi.
 	O método dos gradientes conjugados (CG) e suas variantes pertencem à família dos métodos exatos/iterativos do subespaço de Krylov \cite{Anzt2016} e tem sido adotados na literatura para a solução paralela de elementos finitos. Alguns trabalhos correlatos que utilizam a família CG são apresentados por \citeonline{Yao2015}, \citeonline{Ahamed2016} e \citeonline{Iwashita2017}.
 	
-	A fim de adequar o FEM às arquiteturas modernas será adotado neste trabalho a abordagem elemento a elemento (EbE-FEM) proposta por \citeonline{Hughes1983}. Esta técnica baseia-se no fato de que a matriz do sistema de elementos finitos é caracterizada como uma função parcialmente separável \cite{Dayde1995}, resultado da soma das matrizes elementares. Assim sendo, as operações da solução do sistema de elementos finitos podem ser realizadas em nível elementar, sem a necessidade de se montar a matriz global do sistema. Adicionalmente tem-se a vantagem de que elementos não adjacentes podem ser calculados simultaneamente por meio dos métodos CG \cite{Wathen1989}. Esta última característica torna a técnica EbE-FEM propícia para a implementação paralela nas arquiteturas modernas.
+	A fim de adequar o FEM às arquiteturas modernas será adotado neste trabalho a abordagem elemento a elemento (EbE-FEM) proposta por \citeonline{Hughes1983}. Esta técnica baseia-se no fato de que a matriz do sistema de elementos finitos é caracterizada como uma função parcialmente separável \cite{Dayde1995}, resultado da soma das matrizes elementares. Assim sendo, as operações da solução do sistema de elementos finitos podem ser realizadas em nível elementar, sem a necessidade de se montar a matriz global de coeficientes. Adicionalmente tem-se a vantagem de que elementos não adjacentes podem ser calculados simultaneamente a partir dos métodos da família CG \cite{Wathen1989}. Esta última característica torna a técnica EbE-FEM propícia para a implementação paralela nas arquiteturas modernas.
 	
 	
 	
 
 	
 \section{Problema de Pesquisa}
-	Neste trabalho é feita uma análise quantitativa do desempenho do algoritmo do EbE-FEM nas linguagens concorrentes C++, Erlang e Scala e nas linguagens de computação paralela, CUDA e Harlan.
+	Neste trabalho é feita uma análise quantitativa do desempenho do algoritmo do EbE-FEM nas linguagens concorrentes C++, Erlang e Scala e nas linguagens de computação paralela CUDA e Harlan.
 	O problema \textit{benchmark} a ser resolvido refere-se à equação de Laplace originada do cálculo da distribuição de potencial e do campo elétrico de um capacitor de placas paralelas \cite[Exemplo 10.3]{boylestad2011}.
 	A escolha deste problema se deve à simplicidade de sua modelagem e ao seu comportamento já explorado em livros de eletromagnetismo e circuitos elétricos.
 	
 	
 \section{Justificativa}
 
-A justificativa deste trabalho se baseia na contínua transformação dos paradigmas de programação e arquiteturas de hardware. Como coloca \citeonline{Guo2014}, com aumento de núcleos de processamento, ocorre a redução da razão memória por núcleo, o que impõe uma forte demanda para que os algoritmos utilizem eficientemente todos os níveis de paralelismo disponíveis enquanto minimizam a movimentação de dados. Tal evolução não se limita ao cenários dos \textit{clusters} e \textit{grids} mas alcança inclusive os dispositivos móveis, que atualmente já possuem até oito núcleos. Pensando em um futuro próximo, com os avanços da computação ubíqua que introduz temas como internet das coisas, dispositivos "usáveis", realidade aumentada e realidade virtual, a necessidade de se aproveitar ao máximo todo o poder de processamento disponível se torna ainda mais evidente, uma vez que nessas tecnologias há alta demanda de processamento e/ou pouco espaço físico para comportar um processador adequado. A justificativa para a escolha das linguagens C++, Scala e Erlang se dá devido à ausência de trabalhos acadêmicos relacionando tais tecnologias e seu desempenho. C/C++ é uma linguagem abrangente, robusta e atual, presente por trás de grande parte das aplicações \textit{desktop} e \textit{mobile}. Scala e Erlang (e/ou Elixir) são linguagens naturalmente concorrentes e que possuem crescente \textit{market share} \nocite{erlang}\nocite{scala}.
+A justificativa deste trabalho se baseia na contínua transformação dos paradigmas de programação e arquiteturas de hardware. Como coloca \citeonline{Guo2014}, com aumento de núcleos de processamento, ocorre a redução da razão memória por núcleo, o que impõe uma forte demanda para que os algoritmos utilizem eficientemente todos os níveis de paralelismo disponíveis enquanto minimizam a movimentação de dados. Tal evolução não se limita ao cenários dos \textit{clusters} e \textit{grids} mas alcança inclusive os dispositivos móveis, que atualmente já possuem oito núcleos. Pensando em um futuro próximo, com os avanços da computação ubíqua que introduz temas como internet das coisas, dispositivos "usáveis", realidade aumentada e realidade virtual, a necessidade de se aproveitar ao máximo todo o poder de processamento disponível se torna ainda mais evidente, uma vez que nessas tecnologias há alta demanda de processamento e/ou pouco espaço físico para comportar um processador adequado. A justificativa para a escolha das linguagens C++, Scala e Erlang se de devido à ausência de trabalhos acadêmicos relacionando tais tecnologias e seu desempenho. C/C++ é uma linguagem abrangente, robusta e atual, presente por trás de grande parte das aplicações \textit{desktop} e \textit{mobile}. Scala e Erlang (e/ou Elixir) são linguagens naturalmente concorrentes e que possuem crescente \textit{market share} \nocite{erlang}\nocite{scala}.
 
 
 \section{Objetivos}
@@ -378,7 +378,7 @@ A justificativa deste trabalho se baseia na contínua transformação dos paradi
 		\item Desenvolver um material acessível e de fácil compreensão de introdução ao FEM para o nível da graduação;
 		\item Investigar o quão otimizada é a convergência do EbE a partir do emprego de diferentes precondicionadores;		
 		\item Relacionar as métricas e conceitos de estatísticas necessários para a avaliação adequada de performance;
-		\item Comparar conforme as métricas o desempenho das linguagens nativamente concorrentes e paralelas na resolução do problema \textit{benchmark} proposto neste trabalho.
+		\item Comparar conforme as métricas o desempenho das linguagens nativamente concorrentes e paralelas na resolução do problema \textit{benchmark} deste trabalho.
 	\end{itemize}
 
 \section{Resultados Esperados}
@@ -388,11 +388,11 @@ Espera-se com este trabalho iniciar no CEFET-MG campus Timóteo uma nova linha d
 
 \chapter{Revisão bibliográfica}
 \section{Estado da arte}
-Como coloca \citeonline{Kiss2012}, o processamento paralelo de um problema modelado pelo FEM pode ser feito a partir da decomposição do domínio do problema. Esta decomposição pode ser feita por meio do particionamento da malha que representa o domínio do problema ou por meio da decomposição apropriada da matriz de coeficientes.
-Os trabalhos de \citeonline{Boehmer2011} e \citeonline{Ahamed2016} apresentam a solução paralela do FEM por meio do particionamento da malha. No primeiro caso o processamento é executado comparativamente nas arquiteturas de memória compartilhada e distribuída com o uso da API OpenMP e da biblioteca MPI respectivamente.
+Como coloca \citeonline{Kiss2012}, o processamento paralelo de um problema modelado pelo FEM pode ser feito a partir da decomposição do domínio do problema. Esta decomposição pode ser feita por meio do particionamento da malha  ou por meio da decomposição apropriada da matriz de coeficientes.
+Os trabalhos de \citeonline{Boehmer2011} e \citeonline{Ahamed2016} apresentam casos com a solução paralela do FEM por meio do particionamento da malha. No primeiro caso o processamento é executado comparativamente nas arquiteturas de memória compartilhada e distribuída com o uso da API OpenMP e da biblioteca MPI respectivamente.
 No segundo caso, a comparação é feita entre as linguagens CUDA e OpenCL que são executadas em uma arquitetura \textit{manycore}. 
 
-A técnica EbE é uma forma de decomposição da matriz de coeficientes e será tratada neste trabalho. Por meio desta, as operações são realizadas na matriz de cada elemento, sem que seja necessária a montagem do sistema global. Esta estrutura de dados foi proposta originalmente por \citeonline{Hughes1983} como uma fatoração especial para a matriz de coeficientes de forma a melhorar sua condição a acelerar a convergência \cite{Carey1988}. Devido ao seu desempenho, precisão, economia de memória e à possibilidade de processamento paralelo \cite{Levit1987, Jing2008, Kiss2012} a adoção da abordagem EbE tem sido recorrente à medida em que surgem novas tecnologias de HPC. 
+A técnica EbE é uma forma de decomposição da matriz de coeficientes e será tratada neste trabalho. Por meio desta, as operações são realizadas na matriz de cada elemento, sem que seja necessária a montagem do sistema global. Esta estrutura de dados foi proposta originalmente por \citeonline{Hughes1983} como uma fatoração especial para a matriz de coeficientes, de forma a melhorar sua condição a acelerar a convergência \cite{Carey1988}. Devido ao seu desempenho, precisão, economia de memória e à possibilidade de processamento paralelo \cite{Levit1987, Jing2008, Kiss2012} a adoção da abordagem EbE tem sido recorrente à medida em que surgem novas tecnologias de HPC. 
 
 \citeonline{Carey1988} apresenta uma implementação EbE do gradiente biconjugado (BiCG) para solucionar um sistema de elementos finitos (FE). Segundo ele, o surgimento de novas arquiteturas tais como os processadores vetoriais, paralelos e estações de trabalho microprocessadas foram responsáveis por se repensar o algoritmo original do FEM. A execução vetorial foi realizada no computador CRAY-XMP e foi $8$ vezes mais rápida em relação ao processamento sequencial e apresentou \textit{speed-up} variando de $4.25$ à $6.5$. A execução paralela foi feita no ALLIANT-FX/8, um mini supercomputador com $8$ CPUs. Foi adotado um esquema de ordenação de nós a fim de se evitar condições de corrida no acesso às variáveis globais. Com a utilização de todas as unidade de processamento, o \textit{speed-up} foi em torno de $7$ em relação ao uso de uma única CPU. 
 
@@ -415,7 +415,7 @@ Outros trabalhos importantes para esta monografia são os de \citeonline{Xu2005}
 \label{sec:PVC}
 
 
-Um problema de valor inicial PVI,pode ser definido como uma equação ou sistema de equações diferenciais no qual são dadas as condições iniciais do fenômeno. Tais condições são impostas sobre a variável dependente e suas derivadas em um único instante de tempo (inicial) $t_0$. Um problema de valor de contorno PVC por sua vez, apresenta tais condições impostas em pontos distintos, como por exemplo em $x_i$ e $x_f$. Geralmente os PVI são dados em função do tempo enquanto os PVC são dados em função do espaço \cite{boyceDiprima}.
+Um problema de valor inicial PVI, pode ser definido como uma equação diferencial (ou sistema de equações)  na qual são dadas as condições iniciais do fenômeno. Tais condições são impostas sobre a variável dependente e suas derivadas em um único instante de tempo (inicial) $t_0$. Um problema de valor de contorno PVC por sua vez, apresenta tais condições impostas em pontos distintos, como por exemplo em $x_i$ e $x_f$. Geralmente os PVI são dados em função do tempo enquanto os PVC são dados em função do espaço \cite{boyceDiprima}.
 
 Como pode ser visto na tabela \ref{tab:cond}. as condições estabelecidas sobre a variável dependente, são chamadas de \textit{condições de Dirichlet} ou \textit{essenciais}, enquanto as que são estabelecidas sobre as derivadas da variável dependente são  conhecidas como \textit{condições de Neumann} ou  \textit{naturais}. Além destas duas, existem as restrições específicas do fenômeno modelado, como por exemplo, condições de radiação ou de impedância para problemas do eletromagnetismo \cite{jin}. 
 
@@ -453,7 +453,7 @@ No entanto, a maioria dos problemas da engenharia e da ciência não são linear
 \subsection{Métodos numéricos para PVCs}
 \label{sec:FEM}
 
-O método dos elementos finitos (FEM) é uma alternativa numérica para a solução de PVCs.Neste método, o domínio do problema é visto como uma coleção de subdomínios, chamados de elementos finitos, sobre os quais, a equação que modela o problema é aproximada por um método variacional ou de resíduos ponderados \citeonline{reddy}. Essas diferentes vertentes do método surgiram graças aos esforços independentes de matemáticos, cientistas e engenheiros \cite{zien}. 
+O método dos elementos finitos (FEM) é uma alternativa numérica para a solução de PVCs. Neste método, o domínio do problema é visto como uma coleção de subdomínios, chamados de elementos finitos, sobre os quais, a equação que modela o problema é aproximada por um método variacional ou de resíduos ponderados \citeonline{reddy}. Essas diferentes vertentes do método surgiram graças aos esforços independentes de matemáticos, cientistas e engenheiros \cite{zien}. 
 
 O método das diferenças finitas (FDM) assim como o FEM é uma abordagem numérica para a aproximação de PVCs. Este método consiste na discretização do domínio do problema por meio de uma grade de pontos e na aproximação de cada derivada da equação por um quociente-diferença adequado
 \cite{burdenFaires}. Embora este método seja útil em muitos casos, se torna difícil aplicá-lo em problemas com geometria irregular ou com condições de contorno não usuais. Um exemplo pode ser visto na figura \ref{fig:mdfFem}.
@@ -482,7 +482,7 @@ De acordo com \citeonline{jin}, a aplicação do FEM pode ser feita a partir de 
 
 \subsubsection*{Discretização do Domínio} 
 A discretização do domínio consiste na transformação do contínuo $\Omega$ em uma malha de elementos finitos (discretos). Cada elemento $\Omega_e$ dessa malha representa um subdomínio de $\Omega$.  
-Nesta etapa são definidas a forma, a quantidade e o tamanho dos elementos, de forma que a representação em malha seja a mais próxima possível do objeto em análise \cite{desai}.
+Nesta etapa são definidas a forma, a quantidade e o tamanho dos elementos, de maneira que a representação em malha seja a mais próxima possível do objeto em análise \cite{desai}.
 
 Conforme pode ser visto na figura \ref{fig:numeracao}, cada elemento é identificado na malha a partir de um número que lhe é atribuído. Os vértices (ou nós) de cada elemento também são numerados. Cada nó possui dois valores vinculados a ele, um atuando como identificador global (numeração do nó na malha) e o outro como identificador local (numeração dentro de um dado elemento). A numeração local é geralmente feita no sentido anti-horário, a fim de se obter um valor positivo no cálculo da área ou volume por meio do  determinante \cite{sadiku, jin}. 
 
@@ -517,10 +517,10 @@ Seja a função $\phi$ desconhecida, da qual se deseja obter uma aproximação. 
 
 \begin{equation}
 \label{eq:interpNo}
-\tilde{\phi^e_i} = a^e + b^e x^e_i + c^e y^e_i
+\tilde{\phi^e_i} = a^e + b^e x^e_i + c^e y^e_i \qquad i = 1,2,3
 \end{equation}
 
-Após a resolução do sistema que contém as equações de todos os nós do elemento $e$, a fim de se obter os valores dos coeficientes $a$, $b$ e $c$ da aproximação, é obtida uma função de interpolação $N$ para os valores de $\phi$ no domínio de $e$. Conforme mostra a equação \ref{eq:interpol}, os valores $\phi^e$ em um ponto $(x,y)$ de $e$ podem ser aproximados a partir dos valores nodais $\phi^e_j$.
+Após a resolução do sistema \ref{eq:interpNo}, a fim de se obter os valores dos coeficientes $a$, $b$ e $c$, uma função de interpolação $N$ é gerada. Conforme mostra a equação \ref{eq:interpol}, os valores $\phi^e$ em um ponto $(x,y)$ de $e$ podem ser aproximados  a partir dos valores nodais $\phi^e_j$.
 
 \begin{equation}
 \label{eq:interpol}
@@ -601,15 +601,15 @@ Método da colocação & $ \delta(x - x_i)  $
 \end{tabular}
 \end{equation}
 
-Uma vez que as matrizes elementares foram obtidas é realizado o mapeamento dos identificadores locais para os identificadores globais. Este processo é conhecido como montagem da matriz global e é detalhado no apêndice \ref{ap:SED}. O sistema global é esparso e da ordem do número de nós da malha. As contribuições elementares (ou os coeficientes das matrizes de elementos) são agregados na matriz e as condições de contorno são aplicadas.
+Uma vez que as matrizes elementares foram obtidas é realizado o mapeamento dos identificadores locais para os identificadores globais. Este processo é conhecido como montagem da matriz global e é detalhado no apêndice \ref{sec:SED}. O sistema global é esparso e da ordem do número de nós da malha. As contribuições elementares (ou os coeficientes das matrizes de elementos) são agregados na matriz e as condições de contorno são aplicadas.
 
-Neste trabalho são abordadas apenas as condições de contorno de Dirichlet. Essas condições, também conhecidas como essenciais, correspondem aos valores pre-estabelecidos da variável dependente. Dessa forma a definição do contorno consiste na substituição das incógnitas dos nós de contorno por seus respectivos valores. Assim, se um sistema de ordem $1000$ possui $200$ valores pré-fixados ele pode ser reduzido a ordem $800$. Um exemplo com os passos descritos nessa subseção é apresentado no apêndice \ref{sec:fem2d}.
+Neste trabalho são abordadas apenas as condições de contorno de Dirichlet. Essas condições, também conhecidas como essenciais, correspondem aos valores pre-estabelecidos da variável dependente. Dessa forma a definição do contorno consiste na substituição das incógnitas dos nós de contorno por seus respectivos valores. Assim, se um sistema de ordem $1000$ possui $200$ valores pré-fixados ele pode ser reduzido à ordem $800$. Um exemplo bidimensional com os passos descritos nessa subseção é apresentado no apêndice \ref{sec:fem2d}.
 
 \subsection{Método do Gradiente Conjugado}
 \label{sec:CG}
-O método do gradiente conjugado (CG) foi proposto por Hestenes e Stiefel em 1952 como um método direto para a solução de sistemas $n$ por $n$ positivos definidos (minimização do funcional de energia) \cite{burdenFaires}.
-Embora sua concepção seja de um método exato que converge após $n$ iterações, sua aplicação tem sido feita como na forma de um método iterativo para se aproximar a solução de sistemas esparsos  \cite{Barrett1995}.
-O método trabalha na busca da direção de mais decrescimento do funcional, ou seja, na direção contrária do vetor gradiente para problemas de minimização. Inicialmente é atribuído um ``chute'' para a solução, e à este chute é vinculado um certo resíduo, proporcional à distância entre o valor do chute e o valor da solução (mínimo do funcional). A cada iteração é calculada a correção da direção, a qual é tomada de tal forma que seja ortogonal às direções anteriores, impedindo que o método repita uma direção já percorrida. As direções ortogonais são obtidas por meio de sucessivas multiplicações da matriz do sistema pelo vetor direção. Dessa forma a aproximação da solução em cada iteração é encontrada em um subespaço de Krylov, como mostra a equação \ref{eq:krylov}. O pseudocódigo \ref{alg:kry} descreve as iterações do CG.
+O método do gradiente conjugado (CG) foi proposto por Hestenes e Stiefel em 1952 como um método direto para a solução de sistemas $n$ por $n$ positivos definidos  \cite{burdenFaires}.
+Embora sua concepção seja de um método exato que converge após $n$ iterações, sua aplicação tem sido feita como um método iterativo para se aproximar a solução de sistemas esparsos  \cite{Barrett1995}.
+O método trabalha na busca da direção de maior decrescimento do funcional de energia, ou seja, na direção contrária do vetor gradiente para problemas de minimização. Inicialmente é atribuído um ``chute'' para a solução, e à este chute é vinculado um certo resíduo, proporcional à distância entre o valor do chute e o valor da solução (mínimo do funcional). A cada iteração é calculada a correção da direção, a qual é tomada de tal forma que seja ortogonal às direções anteriores, impedindo que o método repita uma direção já percorrida. As direções ortogonais são obtidas por meio de sucessivas multiplicações da matriz do sistema pelo vetor direção. Dessa forma a aproximação da solução em cada iteração é encontrada em um subespaço de Krylov, como mostra a equação \ref{eq:krylov}. O pseudocódigo \ref{alg:kry} descreve as iterações do CG.
 
 \begin{equation}
 \label{eq:krylov}
@@ -637,19 +637,18 @@ K^m = span(d, Ad, A^2d, A^3d, ..., A^{m-1}d)
 
 \chapter{Desenvolvimento}
 
-O desenvolvimento deste trabalho está  dividido nas etapas de \textit{validação do problema} e \textit{aplicação das estratégias}. Na primeira são apresentados os recursos utilizados para modelar o problema e para definir as possíveis estratégias de solução. De posse das informações obtidas nesta etapa, são definidos na etapa seguinte os métodos e as estruturas de dados adotados em cada linguagem de programação e arquitetura de processamento.
+O desenvolvimento deste trabalho está  dividido nas etapas de \textit{validação do problema} e \textit{aplicação das estratégias}. Na primeira são apresentados os recursos utilizados para modelar o problema e para definir as possíveis estratégias de solução. As decisões tomadas na segunda etapa terão como base os resultados preliminares obtidos na primeira. 
 
 \section{Materiais e métodos}
 O ambiente de desenvolvimento \matlab foi adotado para a realização da etapa de validação do problema. A motivação dessa escolha se deu pela facilidade da manipulação de matrizes oferecida pelo ambiente e pela existência de ferramentas dedicadas à especificação de PVCs e à programação paralela.
-A aplicação das estratégias propostas na etapa de validação nas linguagens e arquiteturas adotadas neste trabalho é feita pela adequação da sintaxe e do paradigma de programação da implementação realizada no \matlab. 
 
 \subsection{Especificação da geometria}
-O problema \textit{benchmark} utilizado neste trabalho é o exemplo $10.3$ do livro Análise de Circuitos de \citeonline{boylestad2011} e é ilustrado na figura \ref{fig:mesh}{(a)}. O capacitor é composto de duas placas quadradas paralelas com lado de $2$ polegadas, cuja distância entre elas é de $\frac{1}{32}$ polegadas. O problema informa que a diferença de potencial entre as placas é de $48V$, dessa forma foi assumido que uma das placas possui $48V$ e e que a outra está aterrada.
+O problema \textit{benchmark} utilizado neste trabalho é o exemplo $10.3$ do livro Análise de Circuitos de \citeonline{boylestad2011} e é ilustrado na figura \ref{fig:mesh}{(a)}. O capacitor é composto de duas placas quadradas paralelas com lado de $2$ polegadas sendo a distância entre elas igual $\frac{1}{32}$ polegadas. O problema informa que a diferença de potencial entre as placas é de $48V$, dessa forma foi assumido que uma das placas possui $48V$ e e que a outra está aterrada.
 
-A fim de se realizar uma análise mais ampla do problema a distribuição do campo elétrico será calculada entre as placas mas também no espaço ao redor. Será considerada uma região quadrada de $16cm$ de lado como mostra o esquema na figura \ref{fig:mesh}{(b)}. Também foi considerado que a espessura de cada placa é a metade da largura da região entre elas, ou seja, $\frac{1}{64}$ polegadas.
+A fim de se realizar uma análise mais ampla do problema a distribuição do campo elétrico é calculada entre as placas mas também no espaço ao redor. Será considerada uma região quadrada de $16cm$ de lado como mostra o esquema na figura \ref{fig:mesh}{(b)}. Também foi considerado que a espessura de cada placa é a metade da largura da região entre elas, ou seja, $\frac{1}{64}$ polegadas.
 
 
-A fim de se obter um parâmetro da corretude dos resultados obtidos neste trabalho, foi feita a simulação do problema na \textit{partial differential equation toolbox} do \matlab. Por meio dessa ferramenta é possível programaticamente e via interface gráfica definir a equação diferencial que rege o problema, a geometria, as condições de contorno, a malha inicial e seus refinamentos bem como a solução e exibição dos resultados do PVC. As figuras \ref{fig:mesh}{(c)} e \ref{fig:mesh}{(d)} mostram a geometria e a malha inicial modeladas com o auxílio da interface gráfica da \textit{pdetool}.
+A fim de se obter um parâmetro da corretude dos resultados obtidos, foi feita a simulação do problema na \textit{partial differential equation toolbox} do \matlab. Por meio dessa ferramenta é possível programaticamente e via interface gráfica definir a equação diferencial que rege o problema, a geometria, as condições de contorno, a malha inicial e seus refinamentos bem como a solução e exibição dos resultados do PVC. As figuras \ref{fig:mesh}{(c)} e \ref{fig:mesh}{(d)} mostram a geometria e a malha inicial modeladas com o auxílio da interface gráfica da \textit{pdetool}.
 
 \subsection{Obtenção dos valores de referência}
 
@@ -695,7 +694,7 @@ De posse da solução da \textit{pdetool}, foram tomados $8$ pontos de referênc
 
 \subsection{Implementação do FEM}
 Após a simulação e obtenção dos valores de referência foi realizada a implementação do método dos elementos finitos em duas dimensões, conforme o apresentado na seção \ref{sec:fem2d} do referencial teórico.
-A fim de não tirar proveito das funções do \matlab de forma a manter a generalidade da solução implementada e a facilidade de transcrevê-la para outras linguagens, foram utilizadas nos algoritmos deste trabalho apenas as funções da \textit{PDE toolbox} relativas à geometria, geração da malha e exibição dos resultados. No pseudocódigo \ref{alg:FEM} as palavras destacadas em itálico são variáveis, as funções destacadas em negrito fazem parte do \matlab e as funções descritas nas linhas de $9$ a $12$ são detalhadas no exemplo da seção \ref{sec:fem2d}. A tabela \ref{tab:matlabFun} contém a descrição das funções utilizadas.
+A fim de não tirar proveito das funções do \matlab de forma a manter a generalidade da solução implementada e a facilidade de transcrevê-la para outras linguagens, foram utilizadas nos algoritmos deste trabalho apenas as funções da \textit{PDE toolbox} relativas à geometria, geração da malha e exibição dos resultados. No pseudocódigo \ref{alg:FEM} as palavras destacadas em itálico são variáveis, as funções destacadas em negrito fazem parte do \matlab e as funções descritas nas linhas de $9$ a $12$ são detalhadas no exemplo do apêndice \ref{sec:fem2d}. A tabela \ref{tab:matlabFun} contém a descrição das funções utilizadas.
 
 \begin{algorithm}	
 	\caption{\label{alg:FEM}Pseudocódigo do FEM} 
@@ -776,11 +775,11 @@ A fim de não tirar proveito das funções do \matlab de forma a manter a genera
  
 
 
-A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações na solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método do gradiente conjugado proposta por \citeonline{Barrett1995}. O CG como explicitado no referencial teórico, é um método iterativo não estacionário do subespaço de Krylov. Como coloca \citeonline{Wathen1989}, o uso de métodos iterativos se tornou competitivo à medida em que os sistemas de equações se tornavam maiores. A técnica EBE foi proposta por \citeonline{Hughes1983} como como sendo um precondicionador para o CG de forma a possibilitar que as computações com matrizes sejam realizadas no nível elementar \cite{Kiss2012} de forma a possibilitar a vetorização (ou paralelização) e a economia de memória.
+A função $resolveSistLinear$ é o ponto central deste trabalho, uma vez que a análise é feita sobre o desempenho das implementações durante solução do sistema de equações originado do FEM. Foram utilizados $2$ \textit{solvers} a fim de se verificar a performance e a gestão de memória. O primeiro deles é o \textit{solver} ``$\setminus$'' do \matlab e o segundo é a implementação do método do gradiente conjugado proposta por \citeonline{Barrett1995}. O CG como explicitado no referencial teórico, é um método iterativo não estacionário do subespaço de Krylov. Como coloca \citeonline{Wathen1989}, o uso de métodos iterativos se tornou competitivo à medida em que os sistemas de equações se tornavam maiores. A técnica EbE desenvolvida neste trabalho foi proposta originalmente por \citeonline{Hughes1983} como como sendo um precondicionador para o CG de forma a possibilitar que as computações com matrizes sejam realizadas no nível elementar \cite{Kiss2012}.
 
-A motivação da escolha do \textit{solver} do \matlab (``$\setminus$'' ou $mldivide$) está no fato de ele utilizar diferentes algoritmos dependendo da estrutura da matriz de coeficientes, tais como simetria e esparsidade \cite{matMldivide}. Especificamente para o problema deste trabalho, cuja matriz é Hermitiana (auto-adjunta) e positiva definida, o \textit{solver} adota a fatoração de Cholesky ou a LDL.
+A motivação da escolha do \textit{solver} do \matlab (``$\setminus$'' ou $mldivide$) está no fato de ele utilizar diferentes algoritmos dependendo da estrutura da matriz de coeficientes, tais como simetria e esparsidade \nocite{matMldivide}. Especificamente para o problema deste trabalho, cuja matriz é Hermitiana (auto-adjunta) e positiva definida, o \textit{solver} adota a fatoração de Cholesky ou a LDL.
 
-A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++. O pseudocódigo do CG precondicionado com a matriz $M$ é apresentado em \ref{alg:CG} e a descrição de cada etapa é apresentada na seção \ref{sec:CG} da fundamentação teórica.
+A motivação para a escolha do CG implementado por \citeonline{Barrett1995} está no fato de que seu material é citado em diferentes trabalhos da revisão bibliográfica, como em \citeonline{Kiss2012, Dolwithayakul2012, Yang2016}. Além de um completo \textit{survey} de métodos numéricos para a solução de sistemas lineares, os autores disponibilizam as implementações na linguagem do \matlab e em C++. O pseudocódigo \ref{alg:CG} refere-se ao CG precondicionado com a matriz $M$.
 
 \begin{algorithm}	
 	\caption{\label{alg:CG}Pseudocódigo do CG} 
@@ -823,7 +822,7 @@ A adaptação do bloco referente à atribuição das condições de contorno (li
 	\label{fig:contornoEBE}
 \end{figure}
 
-De posse das matrizes e vetores elementares com as condições de contorno atribuídas, é feita a adaptação no algoritmo do  CG a fim de que os cálculos envolvendo matrizes sejam feitos elemento a elemento. As operações entre vetores e escalares são mantidas no nível global, visto que não requerem tanto esforço computacional como as operações matriciais.  As adaptações consistem basicamente em percorrer os $N$ elementos, realizando os cálculos pertinentes e em seguida, armazenar nos vetores globais os resultados gerados para cada nó do elemento. As linhas $4$ e $12$ do algoritmo \ref{alg:CG} possuem operações matriciais e são modificadas conforme apresentado nos pseudocódigos \ref{alg:ebeCG1} e \ref{alg:ebeCG2}. Além disso, o resíduo inicial da linha $2$ do \ref{alg:CG} é igual a $b$ , dado que o chute $x_0$ vale zero para todos os nós. Como os valores de $b$ foram atribuídos pelas condições de contorno em nível elementar, é necessário realizar a montagem do vetor $b$ global para a determinação do resíduo inicial aconteça. Este processo de montagem é apresentado no pseudocódigo \ref{alg:ebeCG3}.
+De posse das matrizes e vetores elementares com as condições de contorno atribuídas, é feita a adaptação no algoritmo do  CG a fim de que os cálculos envolvendo matrizes sejam feitos elemento a elemento. As operações entre vetores ou vetores e escalares são mantidas no nível global, visto que não requerem tanto esforço computacional como as operações matriciais.  As adaptações consistem basicamente em percorrer os $N$ elementos, realizando os cálculos pertinentes e em seguida, armazenar nos vetores globais os resultados gerados para cada nó do elemento. As linhas $4$ e $12$ do algoritmo \ref{alg:CG} possuem operações matriciais e são modificadas conforme apresentado nos pseudocódigos \ref{alg:ebeCG1} e \ref{alg:ebeCG2}. Além disso, o resíduo inicial da linha $2$ do \ref{alg:CG} é igual a $b$ , dado que o chute $x_0$ vale zero para todos os nós. Como os valores de $b$ foram atribuídos pelas condições de contorno em nível elementar, é necessário realizar a montagem do vetor $rhs$ global para para determinar o resíduo inicial. Este processo de montagem é apresentado no pseudocódigo \ref{alg:ebeCG3}.
 
 \begin{algorithm}	
 	\caption{\label{alg:ebeCG1}Adaptação da declaração $z_{i-1}$ = resolve($M$, $r_{i-1}$)} 
@@ -920,8 +919,8 @@ Uma vez realizada a coloração, o processamento pode ocorrer de tal forma que e
 \end{algorithm}
 
 \subsection{Paralelização do algoritmo}
-A fim de manter a conformidade com o ambiente de desenvolvimento optou-se por utilizar a \textit{parallel Computing toolbox} do \matlab. Esta ferramenta possibilita a implementação para plataformas \textit{multicore}, GPUs, \textit{clusters}, \textit{grids} e \textit{cloud}. De acordo com a documentação do \matlab \cite{matMulticore}, funções de álgebra linear como $fft$, $mldivide$, $eig$, $svd$, e $sort$
-são \textit{multithread} desde a versão R2018a. No entanto, é possível melhorar a performance de funções customizadas por meio da \textit{parallel toolbox}.
+A fim de manter a conformidade com o ambiente de desenvolvimento optou-se por utilizar a \textit{parallel Computing toolbox} do \matlab. Esta ferramenta possibilita a implementação para plataformas \textit{multicore}, GPUs, \textit{clusters}, \textit{grids} e \textit{cloud}. De acordo com a documentação do \matlab \nocite{matMulticore}, funções de álgebra linear como $fft$, $mldivide$, $eig$, $svd$, e $sort$
+são \textit{multithread} desde a versão R2008a. No entanto, é possível melhorar a performance de funções customizadas por meio da \textit{parallel toolbox}.
 
 A fim de garantir a robustez do código paralelizado, o \matlab disponibiliza a programação em múltiplos \textit{workers} ao invés de \textit{threads}. Cada \textit{worker} é um processo que trabalha em função do processo principal (\textit{client}) que o originou. Desta forma, as tarefas são divididas entre os \textit{workers} e coordenadas pelo \textit{client}, num modelo mestre-escravo. A fim de evitar condições de corrida e o \textit{overhead} de comunicação entre os processos, a ferramenta trabalha por meio de distribuição e troca de mensagens (MPI) ao invés do compartilhamento de memória. Assim sendo, os dados são copiados para cada \textit{worker} e ao final do processamento, agregados novamente no \textit{client}. A tabela \ref{tab:partool} contém a descrição das funções utilizadas da \textit{parallel toolbox}.
 
@@ -1030,15 +1029,15 @@ Enquanto a paralelização por \textit{parfor} é feita elemento a elemento, a f
 
 
 \section{Resultados}
-Os resultados deste trabalho estão divididos nas subseções \textit{resultados preliminares} e \textit{resultados aplicados}. Na primeira subseção são apresentados os resultados da modelagem com o \matlab e na subseção seguinte os resultados da aplicação do algoritmo desenvolvido nas linguagens C++, Scala, Erlang, CUDA e Harlan.
+Os resultados deste trabalho estão divididos nas subseções \textit{resultados preliminares} e \textit{resultados aplicados}. Na primeira subseção são apresentados os resultados da modelagem com o \matlab e nas subseções seguintes os resultados da aplicação do algoritmo desenvolvido nas linguagens C++, Scala, Erlang, CUDA e Harlan.
 
 \subsection{Resultados preliminares}
-O objetivo desta primeira etapa de atividades é validar o processo de paralelização do EbE-FEM na tentativa de antecipar as possíveis dificuldades que possam surgir na implementação do algoritmo nas linguages concorrentes e paralelas e nas arquiteturas multi e \textit{manycore}. 
-
+O objetivo desta primeira etapa de atividades é validar o processo de paralelização do EbE-FEM na tentativa de antecipar as eventuais dificuldades que possam surgir na implementação do algoritmo nas linguages concorrentes e paralelas e nas arquiteturas multi e \textit{manycore}. 
+As execuções foram realizadas em um notebook Dell Inspiron N4050 com proessador i5-2450M, $2.50$GHz e memória SO-DIMM DDR3 de $4$ GiB.
 
 \subsubsection*{\textit{Overview} da triangulação}
 No início do desenvolvimento foram selecionados pontos de referência a fim de se estimar a precisão das aproximações, com base nos resultados da \text{pdetool} (figura \ref{fig:solPde}).
-A \textit{pdetool} forneça a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, a opção de refinamento programático disponibilizada pela \textit{toolbox} é dada pelo parâmetro \textit{Hmax} da função \textit{generateMesh} (algoritmo \ref{alg:FEM}). Enquanto o refinamento da \textit{pdetool} mantém os pontos da malha original, a alteração do \textit{Hmax} gera uma nova malha, fazendo com que os pontos de referência se percam. Embora essa abordagem possibilite o maior controle da quantidade de elementos, ela impossibilita a verificação da precisão do valor de um ponto após o refinamento. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Como não se pôde observar a precisão foi observado o valor médio próximo aos pontos de referência.  A tabela \ref{tab:hmax} apresenta a quantidade de elementos e nós gerados para cada valor de $Hmax$.
+A \textit{pdetool} fornece a opção de refinamento da malha, que consiste na subdivisão dos triângulos já existentes, no entanto, a opção de refinamento programático disponibilizada pela \textit{toolbox} é dada pelo parâmetro \textit{Hmax} da função \textit{generateMesh} (algoritmo \ref{alg:FEM}). Enquanto o refinamento da \textit{pdetool} mantém os pontos da malha original, a alteração do \textit{Hmax} gera uma nova malha, fazendo com que os pontos de referência se percam. Embora essa abordagem possibilite o maior controle da quantidade de elementos, ela impossibilita a verificação da precisão do valor de um ponto após o refinamento. A figura \ref{fig:vizinha} destaca os nós da vizinhança de cada ponto de referência. Como não se pôde observar a precisão foi observado o valor médio próximo aos pontos de referência.  A tabela \ref{tab:hmax} apresenta a quantidade de elementos e nós gerados para cada valor de $Hmax$.
 
 
 \begin{figure}%
@@ -1077,10 +1076,10 @@ A \textit{pdetool} forneça a opção de refinamento da malha, que consiste na s
 
 \subsubsection*{\textit{Overview} das implementações}
 Conforme apresentado no capítulo de materiais e métodos, foram desenvolvidas duas versões do algoritmo  do EbE-FEM, sendo a primeira adequada para sistemas de memória compartilhada e \textit{multithread} (algoritmos \ref{alg:ebeCorCG1} a \ref{alg:ebeCorCG3}) e a segunda para sistemas de memória distribuída (\ref{alg:ebeParCG1} e \ref{alg:ebeSpmdCG1}).
-A primeira versão do algoritmo proposta por \citeonline{Kiss2012} apresenta coloração e é paralelizável, no entanto, devido às restrições dos blocos \textit{parfor} e \textit{spmd} da \textit{parallel computing toolbox} do \matlab foi possível testá-la apenas em sua sequencialmente.
+A primeira versão do algoritmo proposta por \citeonline{Kiss2012} apresenta coloração e é paralelizável, no entanto, devido às restrições dos blocos \textit{parfor} e \textit{spmd} da \textit{parallel computing toolbox} do \matlab foi possível testá-la apenas  sequencialmente.
 A segunda implementação utiliza uma estrutura de dados distribuída e desacoplada para atender aos critérios de ``fatiamento'' e independência dos blocos \textit{parfor} e \textit{spmd}.
 
-A tabela \ref{tab:seq} exiibe os resultados das execuções com o uso de \textit{solvers} sequenciais. as linhas indicadas com $x$ mostram as limitações do processo de montagem da matriz global devido ao uso excessivo de memória. A mensagem de erro retornada pelo \matlab é \textit{Requested 44692x44692 (14.9GB) array exceeds maximum array size preference}. A adoção do mecanismo de matrizes esparsas do \matlab no entanto possibilitou que o uso de memória e o percentual de CPU fossem reduzidos. Os \textit{solvers} de matrizes esparsas e o EbE apresentaram um uso equilibrado da CPU em relação ao \textit{mldivide} e \textit{CG} com matrizes \textit{full} que aumentaram o percentual do uso da CPU à medida que o número de elementos da malha aumentou. A figura \ref{fig:grafSeq} exibe a comparação do tempo de processamento e uso de memória dos \textit{solvers} mais competitivos para para os refinamentos $0.3$, $0.2$ e $0.1$.
+A tabela \ref{tab:seq} exibe os resultados das execuções com o uso de \textit{solvers} sequenciais. As linhas indicadas com $x$ mostram as limitações do processo de montagem da matriz global devido ao uso excessivo de memória. A mensagem de erro retornada pelo \matlab é \textit{Requested 44692x44692 (14.9GB) array exceeds maximum array size preference}. A adoção do mecanismo de matrizes esparsas do \matlab no entanto possibilitou que o uso de memória e o percentual de CPU fossem reduzidos. Os \textit{solvers} de matrizes esparsas e o EbE apresentaram um uso equilibrado da CPU em relação ao \textit{mldivide} e \textit{CG} com matrizes \textit{full} que aumentaram o percentual do uso da CPU à medida que o número de elementos da malha aumentou. A figura \ref{fig:grafSeq} exibe a comparação do tempo de processamento e uso de memória dos \textit{solvers} mais competitivos para para os refinamentos $0.3$, $0.2$ e $0.1$.
 
 \begin{figure}%
 	\centering	
@@ -1126,25 +1125,25 @@ A tabela \ref{tab:seq} exiibe os resultados das execuções com o uso de \textit
 	\label{tab:seq}	
 \end{table}
 
-Como pode ser visto na tabela \ref{tab:comPar} o desempenho das implementações paralelas do EbE com coloração foram muito piores em relação a tempo de execução que a implementação sequencial. Como pode ser visto na última coluna, uma iteração do CG com $spmd$ demorou cerca de $66$ vezes mais que a versão sequencial e e a solução completa  do problema $48$ vezes mais. Após dezenas de adaptações no algoritmo e nas estruturas de dados a fim de melhorar estes números foi verificado por meio da leitura mais aprofundada da documentação que a existência dos comandos \textit{parfor} e \textit{spmd} dentro de \textit{loops} não é recomendada visto que a cada iteração do \textit{loop} externo ocorre troca de mensagens entre o processo \textit{client} e os \textit{workers}. Além disso, a documentação informa que iterações que a presentam operações simples e baixo tempo de execução não devem ser paralelizadas pela  \textit{toolbox} devido ao custo adicional de memória e comunicação para se criar e manter os \textit{workers}.
+Como pode ser visto na tabela \ref{tab:comPar} o desempenho das implementações paralelas do EbE com coloração foram muito piores em relação a tempo de execução que a implementação sequencial. Como pode ser visto na última coluna, uma iteração do CG com $spmd$ demorou cerca de $66$ vezes mais que a versão sequencial e a solução completa  do problema $48$ vezes mais. Após dezenas de adaptações no algoritmo e nas estruturas de dados a fim de melhorar estes números foi verificado por meio da leitura mais aprofundada da documentação da \textit{partool} que a existência dos comandos \textit{parfor} e \textit{spmd} dentro de \textit{loops} não é recomendada visto que a cada iteração do \textit{loop} externo ocorre troca de mensagens entre o processo \textit{client} e os \textit{workers}. Além disso, a documentação informa que iterações que apresentam operações simples e baixo tempo de execução não devem ser paralelizadas pela  \textit{toolbox} devido ao custo adicional de memória e comunicação para se criar e manter os \textit{workers}.
 
 \begin{table}[]
 	\centering
-	\label{tab:comPar}
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
 		\textbf{}                & \textbf{Sequencial} & \textbf{ParFor} & \textbf{SPMD} & \textbf{ParFor/seq.} & \textbf{SPMD/seq.} \\ \hline
-		\textbf{Tempo iter. (s)} & 0,0023883636        & 0,0525300909    & 0,1203660909  & 28,1487395331        & 65,6833115874      \\ \hline
-		\textbf{\% CPU}          & 28                  & 74              & 42            & 2,6428571429         & 1,5                \\ \hline
-		\textbf{Tempo Total (s)} & 4,53238             & 84,250123       & 219,345573    & 18,588495007         & 48,3952300999      \\ \hline
+		\textbf{Tempo iter. (s)} & 0,002388        & 0,052530    & 0,120366  & 28,148739        & 65,683311      \\ \hline
+		\textbf{\% CPU}          & 28                  & 74              & 42            & 2,642857         & 1,5                \\ \hline
+		\textbf{Tempo Total (s)} & 4,53238             & 84,250123       & 219,3455    & 18,58849         & 48,395230      \\ \hline
 	\end{tabular}
 	\caption{Comparação das implementações paralelas para $Hmax = 1$}
+		\label{tab:comPar}
 \end{table}
 
 
 
 \chapter{Conclusão}
-O EbE-FEM se mostrou uma estratégia competitiva para o processamento de sistemas esparsos em relação aos \textit{solvers} otimizados \textit{mldivide} e \textit{CG}, sobretudo na demanda de memória. A paralelização adequada deste algoritmo por meio do uso de \textit{threads} tende a ser promissora na melhoria do tempo de processamento apresentado na figura \ref{fig:grafSeq}. Os desafios enfrentados na paralelização do algoritmo por meio dos blocos \textit{parfor} e \textit{spmd} possibilitaram a criação de duas versões do EbE, sendo uma de memória compartilhada e outra de memória distribuída, que facilita na adaptação do código para as linguagens e arquiteturas que serão utilizadas na segunda etapa do trabalho.
+O EbE-FEM se mostrou uma estratégia competitiva para o processamento de sistemas esparsos em relação aos \textit{solvers} otimizados \textit{mldivide} e \textit{CG}, sobretudo na demanda de memória. A paralelização adequada deste algoritmo por meio do uso de \textit{threads} tende a ser promissora na melhoria do tempo de processamento apresentado na figura \ref{fig:grafSeq}. Os desafios enfrentados na paralelização do algoritmo por meio dos blocos \textit{parfor} e \textit{spmd} possibilitaram a criação de duas versões do EbE, sendo uma de memória compartilhada e outra de memória distribuída, que facilitarão na adequação do código para as linguagens e arquiteturas que serão utilizadas na segunda etapa do trabalho.
 % ----------------------------------------------------------
 % ELEMENTOS PÓS-TEXTUAIS
 % ----------------------------------------------------------
