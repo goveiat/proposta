@@ -404,14 +404,8 @@ Outros trabalhos importantes para esta monografia são os de \citeonline{Xu2005}
 
 
 \section{Fundamentação teórica}
-% ---
-Neste capítulo é apresentado o referencial teórico para a compreensão dos métodos e conceitos utilizados ao longo deste trabalho. 
-Na \hyperref[sec:PVC]{primeira seção} é apresentada a definição de Problemas de Valor de Contorno (PVC) bem como o problema a ser solucionado neste trabalho. 
-Na \hyperref[sec:SED]{seção seguinte}, são abordados os Sistemas de Elementos Discretos a fim de fornecer a compreensão intuitiva e genérica do Método dos Elementos Finitos.
-Em seguida, na seção \ref{sec:FEM} é feita a introdução ao Método dos Elementos Finitos (FEM). 
-As seções \ref{sec:preProc}, \ref{sec:proc} e \ref{sec:posProc} abordam respectivamente, as etapas de pré-processamento, análise e pós-processamento do FEM.
-Nas seção \ref{sec:eletromag} são apresentadas as equações de Maxwell para o Eletromagnetismo e na seção \ref{sec:tecItera} são mostradas algumas técnicas iterativas para a resolução de sistemas lineares, tais como o Método do Gradiente Conjugado e o uso de Precondicionadores. Estas técnicas são as estratégias utilizadas para a realização da abordagem Elemento a Elemento (EbE) do FEM.
-Por fim, a \hyperref[sec:GPGPU]{última seção} deste capítulo apresenta os principais fundamentos da programação de Uso Geral em Unidades de Processamento Gráfico (GPGPU).
+
+
 
 \subsection{Problema de Valor de Contorno}
 \label{sec:PVC}
@@ -479,7 +473,7 @@ As primeiras formulações do FEM são conhecidas como \textit{abordagem direta}
 \subsection{Método dos Resíduos Ponderados}
 \label{sec:proc}
 
-De acordo com \citeonline{jin}, a aplicação do FEM pode ser feita a partir de $4$ passos básicos, os quais serão detalhados nas subseções a seguir.
+De acordo com \citeonline{jin}, a aplicação do FEM pode ser feita a partir de $4$ passos básicos: discretização do domínio, seleção das funções de interpolação, formulação do sistema de equações e solução do sistema de equações. Os três primeiros passos são descritos nos tópicos a seguir e o último na subseção \hyperref[sec:CG]{seguinte}.
 
 
 \subsubsection*{Discretização do Domínio} 
@@ -510,14 +504,19 @@ A função interpoladora escolhida geralmente é um polinômio, e isso ocorre po
 
 Na prática são escolhidos polinômios de primeira ou segunda ordem, mas ordens superiores podem ser adotadas para reduzir o erro de aproximação, sobretudo em bordas com curvaturas, no entanto, ocorre também o aumento da carga computacional \cite{jin}.
 
-Seja a função $\phi$ desconhecida, da qual se deseja obter uma aproximação. A nível elementar, a função $\tilde{\phi^e}$ aproxima $\phi$ dentro do domínio do elemento $e$. O valor $\tilde{\phi^{e}_i}$  é a aproximação do valor de $\phi$ sobre o nó $i$ de $e$. Considerando um subdomínio bidimensional triangular, o valor aproximado em cada nó de um elemento é dado pela equação \ref{eq:interp}.
+Seja a função $\phi$ desconhecida, da qual se deseja obter uma aproximação. A nível elementar, a função $\tilde{\phi^e}$ aproxima $\phi$ dentro do domínio do elemento $e$. Considerando um subdomínio bidimensional triangular a aproximação linear para o elemento $e$ pode ser feita como na equação \ref{eq:interp}. De acordo com esta aproximação, o valor em um dado nó $i$ pode ser obtido pela equação \ref{eq:interpNo}.
 
 \begin{equation}
 \label{eq:interp}
+\tilde{\phi^e} = a^e + b^e x^e + c^e y^e
+\end{equation}
+
+\begin{equation}
+\label{eq:interpNo}
 \tilde{\phi^e_i} = a^e + b^e x^e_i + c^e y^e_i
 \end{equation}
 
-Desta forma, a função que aproxima os valores dentro de todo o domínio $e$ é pode ser dada pela equação \ref{eq:interpol}.
+Após a resolução do sistema que contém as equações de todos os nós do elemento $e$, a fim de se obter os valores dos coeficientes $a$, $b$ e $c$ da aproximação, é obtida uma função de interpolação $N$ para os valores de $\phi$ no domínio de $e$. Conforme mostra a equação \ref{eq:interpol}, os valores $\phi^e$ em um ponto $(x,y)$ de $e$ podem ser aproximados a partir dos valores nodais $\phi^e_j$.
 
 \begin{equation}
 \label{eq:interpol}
@@ -525,7 +524,7 @@ Desta forma, a função que aproxima os valores dentro de todo o domínio $e$ é
 \{N^e\}^T \{\phi^e\}
 \end{equation}
 
-Para manter esta aproximação em conformidade com os valores $\tilde{\phi^e_1}$, $\tilde{\phi^e_e}$ e $\tilde{\phi^e_3}$ em cada nó, a função $N_i^e$ deve ser escolhida de forma que seu comportamento seja o mesmo do delta de Kronecker, como mostra a equação \ref{eq:kron} a seguir.
+As funções $N_i^e$ obtidas interpolam os valores no interior do domínio e preservam os valores nodais $\tilde{\phi^e_1}$, $\tilde{\phi^e_2}$ e $\tilde{\phi^e_3}$. Para que isso ocorra, essas funções devem se comportar como o delta de Kronecker, como mostra a equação \ref{eq:kron} a seguir.
 
 \begin{equation}
 \label{eq:kron}
@@ -558,7 +557,7 @@ r = \mathcal{L} \tilde{\phi} - f \neq 0
 \end{equation}
 
 Embora o resíduo em cada elemento seja diferente de zero em sua maioria, deseja-se que o resíduo total seja igual a zero. Para que isso seja possível, uma função de poderação $w_i$ é introduzida para cada subdomínio $e$. Desta forma na média dos $M$ subdomínios de $\Omega$ a condição residual é atendida \cite{volakis}.
-As equações \ref{eq:res1} e \ref{eq:res2} correspondem ao sistema de resíduos ponderados. A ideia chave dessa abordagem é transformar o problema de valor de contorno para um sistema linear que forneça o valor aproximado. 
+As equações \ref{eq:res1} e \ref{eq:res2} correspondem ao sistema de resíduos ponderados. A ideia chave dessa abordagem é transformar o problema de valor de contorno em um sistema linear que forneça o valor aproximado. 
 
 \begin{equation}
 \label{eq:res1}
@@ -567,26 +566,26 @@ R_i^e = \int_{\Omega}{w_i^e r \ d\Omega} = 0 \qquad i = 1,2,3.
 
 \begin{equation}
 \label{eq:res2}
-R_i^e = \int_{\Omega}{w_i^e [\mathcal{L} \tilde{\phi} - f] \ d\Omega} = 0
+R_i^e = \int_{\Omega}{w_i^e [\mathcal{L} \tilde{\phi} - f] \ d\Omega} = 0  \qquad i = 1,2,3.
 \end{equation}  
 
 
-A escolha particular de $w_i^e = N^e_i$ configura o método de Galerkin, o qual, para um operador $\mathcal{L}$ auto adjunto a matriz do sistema é simétrica e equivalente à matriz gerada pelo método de Ritz. Após a substituição da equação \ref{eq:interpol} em \ref{eq:res2} obtem-se a equação \ref{eq:galerkin}, a qual forma um sistema esparso de equações lineares como o apresentado em \ref{eq:sistema}.
+A escolha particular de $w_i^e = N^e_i$ configura o método de Galerkin, o qual, para um operador $\mathcal{L}$ auto adjunto a matriz do sistema é simétrica e equivalente à matriz gerada pelo método de Ritz. Após a substituição da equação \ref{eq:interpol} em \ref{eq:res2} obtem-se a equação \ref{eq:galerkin}, da qual são extraídas as matrizes elementares, como mostra a equação \ref{eq:sistema}.
 
 
 \begin{equation}
 \label{eq:galerkin}
-R_i^e = \int_{\Omega}{N_i^e \mathcal{L} \{N\}^T \{\phi\} \ d\Omega\}} - \int_{\Omega}{N^e_i f \ d \Omega} = 0
+R_i^e = \int_{\Omega}{N_i^e \mathcal{L} \left( \sum_{j=1}^{n}{N_j^e \phi_j^e} \right) } - \int_{\Omega}{N^e_i f \ d \Omega} = 0  \qquad i = 1,2,3.
 \end{equation} 
 
 
 \begin{equation}
 \label{eq:sistema}
-[K]\{\phi\} = {b}
+\sum_{j=1}^{n}\int_{\Omega}{N_i^e \mathcal{L} N_j^e  \phi_j^e  } = 0 \Rightarrow [K^e]\{\phi^e\} = \{b^e\} \qquad i = 1,2,3.
 \end{equation}  
 
-É importante colocar que o parâmetro $w_i$ deve ser um conjunto de funções integraveis, linearmente independentes
-\cite[p. 60]{reddy}. Alguns casos especiais do método dos resíduos ponderados são obtidos a partir da escolha de $w_i$:
+É importante colocar que o parâmetro $w_i$ deve ser um conjunto de funções integraveis e que respeitem as condições de contorno, ou seja, $w_i$ deve ser igual a zero nos nós de contorno do problema.
+\cite{reddy}. Alguns casos especiais do método dos resíduos ponderados são obtidos a partir da escolha de $w_i$:
 
 \begin{equation}
 \label{eq:metPond}
@@ -598,11 +597,178 @@ Método da colocação & $ \delta(x - x_i)  $
 \end{tabular}
 \end{equation}
 
+Uma vez que as matrizes elementares foram obtidas é realizado o mapeamento dos identificadores locais para os identificadores globais. Este processo é conhecido como montagem da matriz global e é detalhado no apêndice \ref{ap:sistDisc}. O sistema global é esparso e da ordem do número de nós da malha. As contribuições elementares (ou os coeficientes das matrizes de elementos) são agregados na matriz e as condições de contorno são aplicadas.
+
+Neste trabalho são abordadas apenas as condições de contorno de Dirichlet. Essas condições, também conhecidas como essenciais, correspondem aos valores pre-estabelecidos da variável dependente. Dessa forma a definição do contorno consiste na substituição das incógnitas dos nós de contorno por seus respectivos valores. Assim, se um sistema de ordem $1000$ possui $200$ valores pré-fixados ele pode ser reduzido a ordem $800$.
+
 
 \subsubsection*{Método dos elementos finitos em 2 dimensões}
 \label{sec:fem2d}
+Neste tópico serão desenvolvidos os passos do FEM relacionados no tópico anterior. O exemplo apresentado foi adaptado do exemplo $6.1$ de \citeonline{sadiku}. Deseja-se saber o valor do potencial elétrico nos pontos $a$ e $b$ da placa submetida a uma diferença de potencial de $10V$, como mostra a figura \ref{fig:exemplo}[a].
+
+\begin{figure}%
+	\centering
+	\subfloat[Geometria do problema]{{\includegraphics[scale=0.7]{figuras/exemploG.pdf} }}%
+	\qquad
+	\subfloat[Triangulação do problema]{{\includegraphics[scale=0.7]{figuras/exemplo.pdf} }}%
+	\caption{Exemplo do FEM em 2 dimensões}%
+	\label{fig:exemplo}%
+\end{figure}
+
+O primeiro passo consiste em realizar a triangulação da malha. Uma possibilidade de malha é apresentada na figura \ref{fig:exemplo}[b]. A estrutura de dados $tri$ contém a informação sobre quais vértices formam cada elemento enquanto a estrutura $nos$ possui as coordenadas de todos os vértices da geometria do problema. 
+
+O passo seguinte é a definição da função de interpolação. A aproximação da distribuição do potencial num dado elemento pode ser feita por uma função linear, como mostra a equação \ref{eq:interpEx}. Desta forma, os valores de $V$ em cada nó podem ser obtidos pelo sistema de equações \ref{eq:interpNoEx}
+
+\begin{equation}
+\label{eq:interpEx}
+\tilde{V^e} = a^e + b^e x + c^e y
+\end{equation}
+
+\begin{equation}
+\label{eq:interpNoEx}
+\begin{Bmatrix}
+\tilde{V^e_1}  \\
+\tilde{V^e_2} \\
+\tilde{V^e_3}
+\end{Bmatrix}
+=
+\begin{bmatrix}
+1 & x_1 & y_1 \\
+1 & x_2 & y_2 \\
+1 & x_3 & y_3
+\end{bmatrix}
+\begin{Bmatrix}
+a \\
+b \\
+c
+\end{Bmatrix}
+\end{equation}
+
+Deseja-se então resolver o problema encontrando os valores dos coeficientes $a$, $b$ e $c$ que fazem a aproximação de $V$. Dada a simplicidade o sistema ele pode ser resolvido invertendo-se a matriz por meio do cálculo dos determinantes e cofatores. Os valores da transposta da matriz de cofatores são dados na equação \ref{eq:cof} e o determinante na equação \ref{eq:det}. A equação \ref{eq:subs} contém a substituição na equação \ref{eq:interpEx} dos valores dos coeficientes calculados.
+
+\begin{equation}
+\label{eq:cof}
+cof(A^e)^T
+=
+\begin{bmatrix}
+(x_2y_3 - x_3y_2) & (x_3y_1 - x_1y_3) & (x_1y_2 - x_2y_1) \\
+(y_2 - y_3) & (y_3 - y_1) & (y_1 - y_2) \\
+(x_3 - x_2) & (x-1 - x_3) & (x_2 - x_1)
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:det}
+det(A^e)
+=
+(x_1y_2 - x_2y_1)+
+(x_3y_1 - x_1y_3)+
+(x_2y_3 - x_3y_2)
+\end{equation}
+
+\begin{equation}
+\label{eq:subs}
+\tilde{V^e} = 
+\begin{Bmatrix}
+1 & x & y
+\end{Bmatrix}
+\begin{Bmatrix}
+a \\ b \\ b
+\end{Bmatrix}
+= \begin{Bmatrix}
+1 & x & y
+\end{Bmatrix}
+\frac{cof(A^e)^T}{det(A^e)}
+\begin{Bmatrix}
+\tilde{V^e_1}  \\
+\tilde{V^e_2} \\
+\tilde{V^e_3}
+\end{Bmatrix}
+=
+ \sum_{j=1}^{3}{N_j^e (x, y) \tilde{V}_j^e}
+\end{equation}
+
+Obtidas as funções de interpolação $N^e$, a próxima etapa consiste  na montagem do sistema de equações do problema, começando pela definição das matrizes elementares. A distribuição do potencial é modelada pela equação de Laplace $\nabla^2 V = 0$. Substituindo esta equação em \ref{eq:res2} e adotando-se o método de Galerkin, tem-se a integral \ref{eq:lapPon}.
+
+\begin{equation}
+\label{eq:lapPon}
+\iint_{}{N^e_i \nabla^2 V^e dx dy} = R^e_i \qquad i = 1,2,3.
+\end{equation}  
+
+Aplicando a integração por partes fazendo $u = N$ e $dv = nabla^2 V$, tem-se como resultado da relação $\int u dv = uv - \int vdu$ a equação \ref{eq:posParte}.
+
+\begin{equation}
+\label{eq:posParte}
+\iint_{}{\nabla V^e \nabla N^e_i dx dy} = R^e_i \qquad i = 1,2,3.
+\end{equation} 
+
+Substituindo $V^e$ por sua aproximação obtida em (\ref{eq:subs}) obtém-se a fórmula da matriz elementar nas equações \ref{eq:integEl} e \ref{eq:matEl}.
+
+\begin{equation}
+\label{eq:integEl}
+\iint_{}{ \sum_{j=1}^{3}{\nabla N_j^e \tilde{V}_j^e} \nabla N^e_i dx dy} 
+=
+\sum_{j=1}^{3}\iint_{}{\left(\nabla N^e_i \nabla N_j^e \right)  \tilde{V}_j^e dx dy}
+= R^e_i \qquad i = 1,2,3.
+\end{equation} 
+
+\begin{equation}
+\label{eq:matEl}
+K^e_{ij} 
+= 
+\iint_{}{\left(\nabla N^e_i \nabla N_j^e \right)  dx dy}
+\end{equation} 
+
+De forma a agilizar os cálculos das matrizes elementares define-se na equação \ref{eq:PQA}  a partir dos elementos das equações \ref{eq:cof} e \ref{eq:det} as variáveis $P$, $Q$ e $A$. $P$ e $Q$ são obtidas a partir das simplificações nos cálculos e $A$ é a área do triângulo.  A equação \ref{eq:usoSimp} mostra como os coeficientes podem ser calculados após a simplificação
+
+\begin{equation}
+\label{eq:PQA}
+\begin{matrix}
+P_1 = (y_2 - y_3) & P_2 = (y_3 - y_1) & P_3 = (y_1 - y_1) \\
+Q_1 = (x_3 - x_2) & Q_2 = (x_1 - x_3) & Q_3 = (x_2 - x_1) \\
+\ & A = \frac{1}{2}(P_2Q_3 - P_3Q_2) & \
+\end{matrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:usoSimp}
+K^e_{ij} 
+= 
+\frac{1}{4A}(P_iP_j + Q_iQ_j)
+\end{equation}
+
+As matrizes dos elementos e a matriz global são apresentadas nas equações \ref{eq:exMatel} e \ref{eq:exMatG}. Após a definição das matrizes elementares é realizado o mapeamento de seus coeficientes para a matriz global. Enquanto a matriz elementar é da ordem do número de nós do elemento, a matriz global de coeficientes é da ordem do número de nós da malha. O processo de mapeamento é detalhado no anexo \ref{ane:elDis}.
+
+\begin{equation}
+\label{eq:exMatel}
+K^1 = 
+\begin{pmatrix}
+0,560 &	-0,285 &	-0,274 \\
+-0,285 &	0,592 &	-0,3066\\
+-0,274 &	-0,306 &	0,580\\
+\end{pmatrix}
+\
+K^2 =
+\begin{pmatrix} 
+0,620 &	-0,257 &	-0,362\\
+-0,257 &	0,509 &	-0,252\\
+-0,362 &	-0,252 &	0,615
+\end{pmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:exMatG}
+K = 
+\begin{pmatrix}
+0,560 &	-0,285 &	0&	-0,274\\
+-0,285&	1,213&	-0,257&	-0,669\\
+0&	-0,257&	0,509&	-0,252\\
+-0,274&	-0,669&	-0,252&	1,195
+\end{pmatrix}
+\end{equation}
 
 \subsection{Método dos gradientes conjugados}
+\label{sec:CG}
 
 \chapter{Desenvolvimento}
 
